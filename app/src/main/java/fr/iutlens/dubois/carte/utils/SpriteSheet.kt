@@ -2,11 +2,12 @@ package fr.iutlens.dubois.carte.utils
 
 import android.content.Context
 import android.graphics.*
+import android.os.Build
 import java.util.HashMap
 
 class SpriteSheet(val n: Int, val m: Int) {
     private var bitmap: Bitmap? = null
-    private var sprite: Array<Bitmap?>? = null
+    private val sprite: Array<Bitmap?> = arrayOfNulls(n * m)
     var w = 0
     var h = 0
 /*    private val dst: RectF = RectF()
@@ -16,34 +17,24 @@ class SpriteSheet(val n: Int, val m: Int) {
         private var map: MutableMap<Int, SpriteSheet> =  HashMap<Int, SpriteSheet>()
         private var paint = Paint().apply { isAntiAlias = true }
 
-        fun register(id: Int, n: Int, m: Int, context: Context?) {
-            map[id] = SpriteSheet(n, m)
-            if (context != null) {
-                Companion[context, id]
-            }
+        fun register(id: Int, n: Int, m: Int, context: Context) {
+            map[id] = SpriteSheet(n, m).apply { load(context,id) }
         }
 
         fun createCroppedBitmap(
-            src: Bitmap?,
-            left: Int,
-            top: Int,
-            width: Int,
-            height: Int
+            src: Bitmap,
+            left: Int, top: Int,
+            width: Int, height: Int
         ): Bitmap {
-            /*
-		    bug: returns incorrect region, so must do it manually
-		    return Bitmap.createBitmap(src, left, top,width, height);
-		  */
-            val offset = 0
-            val pixels = IntArray(width * height)
-            src!!.getPixels(pixels, offset, width, left, top, width, height)
-            return Bitmap.createBitmap(pixels, width, height, src.config)
-        }
-
-        operator fun get(context: Context, id: Int): SpriteSheet? {
-            val result = map[id]
-            if (result!!.bitmap == null) result.load(context, id)
-            return result
+            return if (Build.VERSION.SDK_INT > 22) {
+                Bitmap.createBitmap(src, left, top, width, height);
+                //bug: returns incorrect region for some version,  so must do it manually
+            } else {
+                val offset = 0
+                val pixels = IntArray(width * height)
+                src.getPixels(pixels, offset, width, left, top, width, height)
+                Bitmap.createBitmap(pixels, width, height, src.config)
+            }
         }
 
         operator fun get(id: Int): SpriteSheet? {
@@ -57,9 +48,10 @@ class SpriteSheet(val n: Int, val m: Int) {
     }
 
     private fun load(context: Context, id: Int) {
-        bitmap = Utils.loadImage(context, id)
-        w = bitmap!!.width / n
-        h = bitmap!!.height / m
+        bitmap = Utils.loadImage(context, id)?.apply {
+            w = width / n
+            h = height / m
+        }
     }
 
     fun paint(canvas: Canvas, ndx: Int, x: Float, y: Float) {
@@ -72,17 +64,11 @@ class SpriteSheet(val n: Int, val m: Int) {
     }
 
     private fun getBitmap(ndx: Int): Bitmap? {
-        if (sprite == null) sprite = arrayOfNulls(n * m)
-        if (sprite!![ndx] == null) {
+        if (sprite[ndx] == null) {
             val i = ndx % n
             val j = ndx / n
-            sprite!![ndx] = createCroppedBitmap(bitmap, i * w, j * h, w, h)
+            sprite[ndx] = createCroppedBitmap(bitmap!!, i * w, j * h, w, h)
         }
-        return sprite!![ndx]
-    }
-
-    init {
-        bitmap = null
-        sprite = null
+        return sprite[ndx]
     }
 }

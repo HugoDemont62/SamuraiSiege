@@ -45,7 +45,7 @@ class GameView : View, View.OnTouchListener {
             background = tileView
             val car = BasicSprite(R.drawable.car, tileView, 3F, 8F)
             sprite = car
-            transform = FocusTransform(this, tileView, car, 5)
+            transform = FocusTransform(this, tileView, car, 12)
 //            transform = FitTransform(this,tileView,Matrix.ScaleToFit.CENTER)
         }
 
