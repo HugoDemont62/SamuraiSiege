@@ -14,13 +14,13 @@ class TiledArea(private val sprite: SpriteSheet,  val data: TileMap) : Sprite {
     private val sizeY : Int get() = data.sizeY
 
     override fun paint(canvas: Canvas) {
-        for (x in 0 until sizeX) {
-            for (y in 0 until sizeY) {
+        for (y in 0 until sizeY) {
+            for (x in 0 until sizeX) {
                 sprite.paint(
                     canvas,
                     data[x, y],
-                    (y * w).toFloat(),
-                    (x * h).toFloat()
+                    (x * w).toFloat(),
+                    (y * h).toFloat()
                 )
             }
         }

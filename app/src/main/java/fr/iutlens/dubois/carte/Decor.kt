@@ -11,10 +11,10 @@ class Decor(dataSrc: Array<String>? = null) : TileMap {
 
     private val data: List<List<Int>> =  (dataSrc ?: map).map { line -> line.map { c -> DIGITS.indexOf(c) } }
 
-    override operator fun get(i: Int, j: Int): Int { return data[i][j] }
+    override operator fun get(x: Int, y: Int): Int { return data[y][x] }
 
-    override val sizeY = data[0].size
-    override val sizeX = data.size
+    override val sizeX = data[0].size
+    override val sizeY = data.size
 
 
     companion object {

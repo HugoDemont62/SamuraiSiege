@@ -10,9 +10,7 @@ class SpriteSheet(val n: Int, val m: Int) {
     private val sprite: Array<Bitmap?> = arrayOfNulls(n * m)
     var w = 0
     var h = 0
-/*    private val dst: RectF = RectF()
-    private val src: Rect = Rect()
-*/
+
     companion object {
         private var map: MutableMap<Int, SpriteSheet> =  HashMap<Int, SpriteSheet>()
         private var paint = Paint().apply { isAntiAlias = true }
