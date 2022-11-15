@@ -8,10 +8,12 @@ import java.lang.ref.WeakReference
 /**
  * Created by dubois on 27/12/2017.
  */
-class RefreshHandler(animator: TimerAction) : Handler(Looper.getMainLooper()) {
-    private val weak: WeakReference<TimerAction> = WeakReference<TimerAction>(animator)
+typealias TimerAction = ()-> Unit
+
+class RefreshHandler(action: TimerAction) : Handler(Looper.getMainLooper()) {
+    private val weak: WeakReference<TimerAction> = WeakReference<TimerAction>(action)
     override fun handleMessage(msg: Message) {
-        weak.get()?.apply { update() }
+        weak.get()?.invoke()
     }
 
     fun scheduleRefresh(delayMillis: Long) {

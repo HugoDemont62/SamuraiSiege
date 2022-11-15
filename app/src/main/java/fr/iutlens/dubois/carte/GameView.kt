@@ -11,13 +11,14 @@ import fr.iutlens.dubois.carte.sprite.Sprite
 import fr.iutlens.dubois.carte.sprite.TiledArea
 import fr.iutlens.dubois.carte.transform.CameraTransform
 import fr.iutlens.dubois.carte.transform.FocusTransform
+import fr.iutlens.dubois.carte.utils.RefreshHandler
 import fr.iutlens.dubois.carte.utils.SpriteSheet
 
 class GameView : View, View.OnTouchListener {
 
 
 
-//    private var timer: RefreshHandler? = null
+    private var timer: RefreshHandler? = null
 
 
     // les 3 constructeurs standards, obligatoires pour une vue, appellent tous init() (plus bas)
@@ -43,7 +44,7 @@ class GameView : View, View.OnTouchListener {
             // Création des différents éléments à afficher dans la vue
             val tileView = TiledArea(R.drawable.decor, Decor())
             background = tileView
-            val car = BasicSprite(R.drawable.car, tileView, 3F, 8F)
+            val car = BasicSprite(R.drawable.car, 3F * tileView.w, 8F * tileView.h)
             sprite = car
             transform = FocusTransform(this, tileView, car, 12)
 //            transform = FitTransform(this,tileView,Matrix.ScaleToFit.CENTER)
@@ -51,12 +52,17 @@ class GameView : View, View.OnTouchListener {
 
 
         setOnTouchListener(this)
-        // Gestion du rafraichissement de la vue. La méthode update (juste en dessous)
-        // sera appelée toutes les 30 ms
-//        timer = RefreshHandler(this)
 
-        // Un clic sur la vue lance (ou relance) l'animation
-//        setOnClickListener { if (!timer!!.isRunning()) timer!!.scheduleRefresh(30) }
+
+        // Gestion du rafraichissement de la vue. Le code (juste en dessous)
+        // sera appelé toutes les 30 ms
+//        timer = RefreshHandler{
+//            if (this.isShown) { // Si la vue est visible
+//                timer?.scheduleRefresh(30) // programme le prochain rafraichissement
+//                invalidate() // demande à rafraichir la vue
+//            }
+//        }
+
 
     }
 
@@ -66,14 +72,6 @@ class GameView : View, View.OnTouchListener {
     }
 
 
-
-/*    override fun update() {
-        if (this.isShown) { // Si la vue est visible
-            timer!!.scheduleRefresh(30) // programme le prochain rafraichissement
-            invalidate() // demande à rafraichir la vue
-        }
-    }
-*/
     /**
      * Méthode appelée (automatiquement) pour afficher la vue
      * C'est là que l'on dessine le décor et les sprites

@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
 
     private val map by lazy { TiledArea(R.drawable.decor, Decor(Decor.map)) }
     private val room by lazy { TiledArea(R.drawable.decor, Decor(Decor.room)) }
-    private val hero by lazy { BasicSprite(R.drawable.car, map, 8.5F, 4.5F) }
+    private val hero by lazy { BasicSprite(R.drawable.car, 8.5F*map.w, 4.5F*map.h) }
     private val gameView by lazy { findViewById<GameView>(R.id.gameView) }
 
 
@@ -45,9 +45,9 @@ class MainActivity : AppCompatActivity() {
         // Création des différents éléments à afficher dans la vue
         val list = SpriteList() // Notre liste de sprites
         repeat(7){ // On crée plusieurs sprites aléatoires
-            list.add(BasicSprite(R.drawable.car, room,
-                (room.data.sizeX*Math.random()).toFloat(),
-                (room.data.sizeY*Math.random()).toFloat(),
+            list.add(BasicSprite(R.drawable.car,
+                (room.data.sizeX*Math.random()*map.w).toFloat(),
+                (room.data.sizeY*Math.random()*map.h).toFloat(),
                 (0..2).random()))
         }
 
@@ -73,8 +73,8 @@ class MainActivity : AppCompatActivity() {
             MotionEvent.ACTION_MOVE -> { // Déplacement du sprite sélectionné
                 (list.target as? BasicSprite)?.let {
                     // On déplace le sprite sélectionné aux nouvelles coordonnées
-                    it.x = point[0] / it.gridW // Attentions aux unités, ici 1 = une tuile
-                    it.y = point[1] / it.gridH
+                    it.x = point[0]
+                    it.y = point[1]
                     gameView.invalidate() // On demande la mise à jour
                     true
                 } ?: false
@@ -104,15 +104,15 @@ class MainActivity : AppCompatActivity() {
     ) = if (event.action == MotionEvent.ACTION_DOWN) {
 
         // Calcul de la direction du héro d'après le clic :
-        var dx = point[0] - hero.xCenter() // calcule le vecteur entre le sprite et la zone touchée
-        var dy = point[1] - hero.yCenter()
+        var dx = point[0] - hero.x // calcule le vecteur entre le sprite et la zone touchée
+        var dy = point[1] - hero.y
  //       Log.d("move", "$dx/$dy")
         if (abs(dx) > abs(dy)) { // calcule la direction principale du déplacement
-            dx = if (dx > 0) 1f else -1f // on se déplace de plus ou moins une case
+            dx = if (dx > 0) map.w.toFloat() else -map.w.toFloat() // on se déplace de plus ou moins une case
             dy = 0f
         } else {
             dx = 0f
-            dy = if (dy > 0) 1f else -1f
+            dy = if (dy > 0) map.h.toFloat() else -map.h.toFloat()
         }
 
         // On applique le déplacement calculé
