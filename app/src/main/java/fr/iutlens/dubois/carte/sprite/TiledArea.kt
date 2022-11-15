@@ -8,10 +8,10 @@ class TiledArea(private val sprite: SpriteSheet,  val data: TileMap) : Sprite {
 
     constructor(id: Int, data: TileMap) : this(SpriteSheet[id]!!, data)
 
-    val w  = sprite.w
-    val h  = sprite.h
-    private val sizeX : Int get() = data.sizeX
-    private val sizeY : Int get() = data.sizeY
+    val w  = sprite.spriteWidth
+    val h  = sprite.spriteHeight
+    private val sizeX  = data.sizeX
+    private val sizeY  = data.sizeY
 
     override fun paint(canvas: Canvas) {
         for (y in 0 until sizeY) {

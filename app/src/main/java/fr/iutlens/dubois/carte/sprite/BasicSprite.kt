@@ -13,7 +13,7 @@ import fr.iutlens.dubois.carte.utils.SpriteSheet
  * Created by dubois on 27/12/2017.
  */
 class BasicSprite(private val spriteSheet: SpriteSheet,
-                        var x: Float, var y: Float,
+                  var x: Float, var y: Float,
                   private var ndx : Int = 0) :
     Sprite {
 
@@ -22,8 +22,8 @@ class BasicSprite(private val spriteSheet: SpriteSheet,
 
 
     // taille du sprite en pixels, divisée par deux (pour le centrage)
-    private val w2 = spriteSheet.w / 2f
-    private val h2 = spriteSheet.h / 2f
+    private val w2 = spriteSheet.spriteWidth / 2f
+    private val h2 = spriteSheet.spriteHeight / 2f
 
     override fun paint(canvas: Canvas) {
         canvas.withTranslation(x,y) {
@@ -32,7 +32,6 @@ class BasicSprite(private val spriteSheet: SpriteSheet,
     }
 
 //rectangle occuppé par le sprite
-    override val boundingBox: RectF
-        get() = RectF(x - w2, y - h2, x + w2, y + h2)
+    override val boundingBox get() = RectF(x - w2, y - h2, x + w2, y + h2)
 
 }

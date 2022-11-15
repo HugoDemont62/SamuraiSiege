@@ -1,7 +1,6 @@
 package fr.iutlens.dubois.carte.sprite
 
 import android.graphics.Canvas
-import android.graphics.RectF
 
 class SpriteList : Sprite {
 
@@ -11,17 +10,16 @@ class SpriteList : Sprite {
         list.add(sprite)
     }
 
-    var target : Sprite? = null
 
-    fun setTarget(x : Float, y : Float): Sprite? {
-        target = list.firstOrNull() { it.boundingBox.contains(x,y) }
-        return target
+
+    operator fun get(x : Float, y : Float): Sprite? {
+        return list.firstOrNull() { it.boundingBox.contains(x,y) }
     }
 
     override fun paint(canvas: Canvas) {
         list.forEach { it.paint(canvas) }
     }
 
-    override val boundingBox: RectF
+    override val boundingBox
         get() = list.map{it.boundingBox}.reduce { result, box -> result.apply { union(box)} }
 }

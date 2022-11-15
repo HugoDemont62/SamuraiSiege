@@ -5,11 +5,11 @@ import android.graphics.*
 import android.os.Build
 import java.util.HashMap
 
-class SpriteSheet(val n: Int, val m: Int) {
+class SpriteSheet(val sizeX: Int, val sizeY: Int) {
     private var bitmap: Bitmap? = null
-    private val sprite: Array<Bitmap?> = arrayOfNulls(n * m)
-    var w = 0
-    var h = 0
+    private val sprite: Array<Bitmap?> = arrayOfNulls(sizeX * sizeY)
+    var spriteWidth = 0
+    var spriteHeight = 0
 
     companion object {
         private var map: MutableMap<Int, SpriteSheet> =  HashMap<Int, SpriteSheet>()
@@ -41,14 +41,14 @@ class SpriteSheet(val n: Int, val m: Int) {
 
     }
 
-    constructor(context: Context, id: Int, n: Int, m: Int) : this(n, m) {
+/*    constructor(context: Context, id: Int, n: Int, m: Int) : this(n, m) {
         load(context, id)
-    }
+    }*/
 
     private fun load(context: Context, id: Int) {
         bitmap = Utils.loadImage(context, id)?.apply {
-            w = width / n
-            h = height / m
+            spriteWidth = width / sizeX
+            spriteHeight = height / sizeY
         }
     }
 
@@ -63,9 +63,9 @@ class SpriteSheet(val n: Int, val m: Int) {
 
     private fun getBitmap(ndx: Int): Bitmap? {
         if (sprite[ndx] == null) {
-            val i = ndx % n
-            val j = ndx / n
-            sprite[ndx] = createCroppedBitmap(bitmap!!, i * w, j * h, w, h)
+            val i = ndx % sizeX
+            val j = ndx / sizeX
+            sprite[ndx] = createCroppedBitmap(bitmap!!, i * spriteWidth, j * spriteHeight, spriteWidth, spriteHeight)
         }
         return sprite[ndx]
     }
