@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity() {
     private fun configDrag() {
         // Création des différents éléments à afficher dans la vue
         val list = SpriteList() // Notre liste de sprites
-        for(i in 1..7){ // On crée plusieurs sprites aléatoires
+        repeat(7){ // On crée plusieurs sprites aléatoires
             list.add(BasicSprite(R.drawable.car, room,
                 (room.data.sizeX*Math.random()).toFloat(),
                 (room.data.sizeY*Math.random()).toFloat(),
@@ -70,7 +70,7 @@ class MainActivity : AppCompatActivity() {
         val list = gameView.sprite as? SpriteList ?: return false // On récupère la liste (quitte si erreur)
         return when(event.action) {
             MotionEvent.ACTION_DOWN -> list.setTarget(point[0], point[1]) != null // Sélection du sprite aux coordonnées cliquées
-            MotionEvent.ACTION_MOVE -> {
+            MotionEvent.ACTION_MOVE -> { // Déplacement du sprite sélectionné
                 (list.target as? BasicSprite)?.let {
                     // On déplace le sprite sélectionné aux nouvelles coordonnées
                     it.x = point[0] / it.gridW // Attentions aux unités, ici 1 = une tuile
@@ -102,16 +102,20 @@ class MainActivity : AppCompatActivity() {
         point: FloatArray,
         event: MotionEvent
     ) = if (event.action == MotionEvent.ACTION_DOWN) {
+
+        // Calcul de la direction du héro d'après le clic :
         var dx = point[0] - hero.xCenter() // calcule le vecteur entre le sprite et la zone touchée
         var dy = point[1] - hero.yCenter()
  //       Log.d("move", "$dx/$dy")
-        if (abs(dx) > abs(dy)) { // calcule la direction du déplacement
+        if (abs(dx) > abs(dy)) { // calcule la direction principale du déplacement
             dx = if (dx > 0) 1f else -1f // on se déplace de plus ou moins une case
             dy = 0f
         } else {
             dx = 0f
             dy = if (dy > 0) 1f else -1f
         }
+
+        // On applique le déplacement calculé
         hero.x += dx
         hero.y += dy
         gameView.invalidate()

@@ -11,7 +11,6 @@ class SpriteList : Sprite {
         list.add(sprite)
     }
 
-
     var target : Sprite? = null
 
     fun setTarget(x : Float, y : Float): Sprite? {
@@ -19,21 +18,10 @@ class SpriteList : Sprite {
         return target
     }
 
-
     override fun paint(canvas: Canvas) {
         list.forEach { it.paint(canvas) }
     }
 
-    private fun computeBound() : RectF {
-        var result : RectF? = null
-        list.forEach {
-            val box = it.boundingBox
-            result?.union(box)
-            result = result ?: box
-        }
-        return result!!
-    }
-
     override val boundingBox: RectF
-        get() = computeBound()
+        get() = list.map{it.boundingBox}.reduce { result, box -> result.apply { union(box)} }
 }
