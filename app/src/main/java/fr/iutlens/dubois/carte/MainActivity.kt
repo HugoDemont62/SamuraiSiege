@@ -5,8 +5,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MotionEvent
 import android.widget.Button
-import fr.iutlens.dubois.carte.Decor.Companion.map
-import fr.iutlens.dubois.carte.Decor.Companion.room
 import fr.iutlens.dubois.carte.sprite.BasicSprite
 import fr.iutlens.dubois.carte.sprite.Sprite
 import fr.iutlens.dubois.carte.sprite.SpriteList
@@ -29,8 +27,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         // Chargement des feuilles de sprites
-        SpriteSheet.register(R.drawable.decor, 5, 4, this)
-        SpriteSheet.register(R.drawable.car, 3, 1, this)
+        SpriteSheet.load(R.drawable.decor, 5, 4, this)
+        SpriteSheet.load(R.drawable.car, 3, 1, this)
 
         // Par défaut on démarre sur la configuration map
         configMap()

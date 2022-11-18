@@ -20,7 +20,7 @@ class FocusTransform(val gameView: GameView, val tiledArea: TiledArea, var sprit
         return point
     }
 
-    override fun get(): Matrix {
+    override fun getMatrix(): Matrix {
         val tilesX = 1.0f * gameView.boundingBox.width() / tiledArea.w
         val tilesY = 1.0f * gameView.boundingBox.height() / tiledArea.h
         val sizeTiles = tilesX.coerceAtMost(tilesY)

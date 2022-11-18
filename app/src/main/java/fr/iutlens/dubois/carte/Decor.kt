@@ -5,17 +5,16 @@ import fr.iutlens.dubois.carte.sprite.TileMap
 /**
  * Created by dubois on 27/12/2017.
  */
-class Decor(dataSrc: Array<String>? = null) : TileMap {
+class Decor(dataSrc: Array<String> = map) : TileMap {
 
     private val DIGITS = "123456789ABCDEFGHIJKL"
 
-    private val data: List<List<Int>> =  (dataSrc ?: map).map { line -> line.map { c -> DIGITS.indexOf(c) } }
+    private val data: List<List<Int>> =  dataSrc.map { line -> line.map { c -> DIGITS.indexOf(c) } }
 
     override operator fun get(x: Int, y: Int): Int { return data[y][x] }
 
     override val sizeX = data[0].size
     override val sizeY = data.size
-
 
     companion object {
          val room = arrayOf(
@@ -30,7 +29,6 @@ class Decor(dataSrc: Array<String>? = null) : TileMap {
             "BCCCCCCCCCCCG",
             "122DE222DE225",
             "677IJ777IJ77A",
-
             )
 
           val map = arrayOf(

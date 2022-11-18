@@ -12,7 +12,7 @@ class FitTransform(val gameView: GameView, val sprite: Sprite, val fitMode : Mat
 
     private var point = FloatArray(2)
 
-    override fun get(): Matrix {
+    override fun getMatrix(): Matrix {
         transform.setRectToRect(sprite.boundingBox,gameView.boundingBox,fitMode)
         transform.invert(reverse)
         return transform

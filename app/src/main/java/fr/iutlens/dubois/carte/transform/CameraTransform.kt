@@ -4,5 +4,5 @@ import android.graphics.Matrix
 
 interface CameraTransform {
     fun getPoint(x: Float, y: Float): FloatArray
-    fun get(): Matrix
+    fun getMatrix(): Matrix
 }
