@@ -7,9 +7,9 @@ import fr.iutlens.dubois.carte.sprite.TileMap
  */
 class Decor(dataSrc: Array<String> = map) : TileMap {
 
-    private val DIGITS = "123456789ABCDEFGHIJKL"
+    private val digits = "123456789ABCDEFGHIJKL"
 
-    private val data: List<List<Int>> =  dataSrc.map { line -> line.map { c -> DIGITS.indexOf(c) } }
+    private val data: List<List<Int>> =  dataSrc.map { line -> line.map { c -> digits.indexOf(c) } }
 
     override operator fun get(x: Int, y: Int): Int { return data[y][x] }
 
