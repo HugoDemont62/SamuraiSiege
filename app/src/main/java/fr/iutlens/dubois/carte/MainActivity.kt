@@ -1,8 +1,11 @@
 package fr.iutlens.dubois.carte
 
 import android.graphics.Matrix
+import android.media.AudioAttributes
+import android.media.SoundPool
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.MotionEvent
 import android.widget.Button
 import fr.iutlens.dubois.carte.sprite.BasicSprite
@@ -21,6 +24,14 @@ class MainActivity : AppCompatActivity() {
 
     private val gameView by lazy { findViewById<GameView>(R.id.gameView) }
 
+    private var soundPool = SoundPool.Builder()
+        .setMaxStreams(10)
+        .setAudioAttributes(AudioAttributes.Builder()
+            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+            .setUsage(AudioAttributes.USAGE_GAME).build()
+        ).build()
+
+    private val bip by lazy { soundPool.load(this,R.raw.message,1) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,6 +43,9 @@ class MainActivity : AppCompatActivity() {
 
         // Par défaut on démarre sur la configuration map
         configMap()
+
+        // Chargement du son
+        Log.d("MainActivity", "Chargement du son $bip")
 
         // On définit les actions des boutons
         findViewById<Button>(R.id.buttonMap).setOnClickListener { configMap() }
@@ -63,6 +77,7 @@ class MainActivity : AppCompatActivity() {
                     MotionEvent.ACTION_DOWN -> { // Sélection du sprite aux coordonnées cliquées
                         val (x,y) = point
                         target = list[x,y]
+                        if (target != null) soundPool.play(bip,1f,1f, 1,0,1f)
                         target != null
                     }
                     MotionEvent.ACTION_MOVE -> { // Déplacement du sprite sélectionné
@@ -99,6 +114,7 @@ class MainActivity : AppCompatActivity() {
             transform = FocusTransform(this, map, hero,12)
             onTouch = { point, event ->
                     if (event.action == MotionEvent.ACTION_DOWN) {
+                        soundPool.play(bip,1f,1f, 1,0,1f)
                         // Calcul de la direction du héro d'après le clic :
                         var dx = point[0] - hero.x // calcule le vecteur entre le sprite et la zone touchée
                         var dy = point[1] - hero.y
