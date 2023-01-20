@@ -2,6 +2,7 @@ package fr.iutlens.dubois.carte
 
 import android.graphics.Matrix
 import android.media.AudioAttributes
+import android.media.MediaPlayer
 import android.media.SoundPool
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -33,6 +34,16 @@ class MainActivity : AppCompatActivity() {
 
     private val bip by lazy { soundPool.load(this,R.raw.message,1) }
 
+    private var mediaPlayer: MediaPlayer? = null
+    // musique : https://opengameart.org/content/warplanets-game-music-ogg
+    private var mute = true
+        set(value){
+            if (field == value) return
+            field = value
+            if (field) stopMusic() else startMusic()
+        }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -47,9 +58,28 @@ class MainActivity : AppCompatActivity() {
         // Chargement du son
         Log.d("MainActivity", "Chargement du son $bip")
 
+
         // On définit les actions des boutons
         findViewById<Button>(R.id.buttonMap).setOnClickListener { configMap() }
         findViewById<Button>(R.id.buttonDrag).setOnClickListener { configDrag() }
+        findViewById<Button>(R.id.buttonMute).setOnClickListener {
+            mute = !mute
+            (it as Button).text = if (mute) "Music on" else "Music off"
+        }
+    }
+
+    private fun startMusic() {
+        if (mediaPlayer == null) {
+            mediaPlayer = MediaPlayer.create(this, R.raw.jungle)
+            mediaPlayer?.isLooping = true
+            mediaPlayer?.start()
+        }
+    }
+
+    private fun stopMusic() {
+        mediaPlayer?.stop()
+        mediaPlayer?.release()
+        mediaPlayer = null
     }
 
 
@@ -136,6 +166,16 @@ class MainActivity : AppCompatActivity() {
             }
             invalidate() // On demande à rafraîchir la vue
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        stopMusic()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (!mute) startMusic()
     }
 
 }
