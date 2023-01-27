@@ -12,6 +12,7 @@ import fr.iutlens.dubois.carte.sprite.Sprite
 import fr.iutlens.dubois.carte.sprite.TiledArea
 import fr.iutlens.dubois.carte.transform.CameraTransform
 import fr.iutlens.dubois.carte.transform.FocusTransform
+import fr.iutlens.dubois.carte.utils.RefreshHandler
 import fr.iutlens.dubois.carte.utils.SpriteSheet
 
 class GameView : View, View.OnTouchListener {
@@ -23,6 +24,8 @@ class GameView : View, View.OnTouchListener {
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
     constructor(context: Context?, attrs: AttributeSet?, defStyle: Int) : super(context, attrs, defStyle)
 
+    var update: (() -> Unit)? = null
+    private var timer: RefreshHandler? = null
     var background: Sprite? = null // La grille pour le fond
     var sprite: Sprite? = null // Le sprite à afficher sur la grille
 
@@ -51,14 +54,20 @@ class GameView : View, View.OnTouchListener {
         setOnTouchListener(this)
 
 
-        // Gestion du rafraichissement de la vue. Le code (juste en dessous)
-        // sera appelé toutes les 30 ms
-//        timer = RefreshHandler{
-//            if (this.isShown) { // Si la vue est visible
-//                timer?.scheduleRefresh(30) // programme le prochain rafraichissement
-//                invalidate() // demande à rafraichir la vue
-//            }
-//        }
+         //Gestion du rafraichissement de la vue. Le code (juste en dessous)
+         //sera appelé toutes les 30 ms
+        timer = RefreshHandler{
+            if (this.isShown) { // Si la vue est visible
+                timer?.scheduleRefresh(30) // programme le prochain rafraichissement
+                update?.invoke()
+                invalidate() // demande à rafraichir la vue
+            }
+        }
+
+        timer?.scheduleRefresh(30)
+
+
+
 
 
     }

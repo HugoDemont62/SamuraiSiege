@@ -6,43 +6,43 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <fr.iutlens.dubois.carte.GameView
-        android:id="@+id/gameView"
+    <Button
+        android:id="@+id/exitBtnId"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="236dp"
+        android:text="Quit"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.149"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="HardcodedText" />
 
     <Button
-        android:id="@+id/buttonMap"
+        android:id="@+id/playBtnId"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginBottom="16dp"
-        android:text="Map"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:layout_marginBottom="19dp"
+        android:text="Play"
+        app:layout_constraintBottom_toTopOf="@+id/exitBtnId"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.149"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.633"
+        tools:ignore="HardcodedText" />
 
     <Button
-        android:id="@+id/buttonDrag"
+        android:id="@+id/creditsBtnId"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="16dp"
-        android:text="Drag'n drop"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:text="Credits"
+        app:layout_constraintBottom_toTopOf="@+id/exitBtnId"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.149"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/playBtnId"
+        app:layout_constraintVertical_bias="0.507"
+        tools:ignore="HardcodedText" />
 
-    <Button
-        android:id="@+id/buttonMute"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:text="Music on"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/buttonDrag"
-        app:layout_constraintStart_toEndOf="@+id/buttonMap" />
 </androidx.constraintlayout.widget.ConstraintLayout>

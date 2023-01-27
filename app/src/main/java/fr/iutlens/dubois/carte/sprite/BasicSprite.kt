@@ -12,7 +12,7 @@ import fr.iutlens.dubois.carte.utils.SpriteSheet
  *
  * Created by dubois on 27/12/2017.
  */
-class BasicSprite(private val spriteSheet: SpriteSheet,
+open class BasicSprite(private val spriteSheet: SpriteSheet,
                   var x: Float, var y: Float,
                   private var ndx : Int = 0) : Sprite {
 

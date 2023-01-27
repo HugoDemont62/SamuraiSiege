@@ -6,18 +6,18 @@ import android.media.MediaPlayer
 import android.media.SoundPool
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.MotionEvent
+import android.view.Window
+import android.view.WindowManager
 import android.widget.Button
-import fr.iutlens.dubois.carte.sprite.BasicSprite
-import fr.iutlens.dubois.carte.sprite.Sprite
-import fr.iutlens.dubois.carte.sprite.SpriteList
-import fr.iutlens.dubois.carte.sprite.TiledArea
+import fr.iutlens.dubois.carte.sprite.*
 import fr.iutlens.dubois.carte.transform.FitTransform
 import fr.iutlens.dubois.carte.transform.FocusTransform
 import fr.iutlens.dubois.carte.utils.SpriteSheet
 import kotlin.math.abs
-
 
 
 class MainActivity : AppCompatActivity() {
@@ -25,157 +25,102 @@ class MainActivity : AppCompatActivity() {
 
     private val gameView by lazy { findViewById<GameView>(R.id.gameView) }
 
-    private var soundPool = SoundPool.Builder()
-        .setMaxStreams(10)
-        .setAudioAttributes(AudioAttributes.Builder()
-            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-            .setUsage(AudioAttributes.USAGE_GAME).build()
-        ).build()
-
-    private val bip by lazy { soundPool.load(this,R.raw.message,1) }
-
-    private var mediaPlayer: MediaPlayer? = null
-    // musique : https://opengameart.org/content/warplanets-game-music-ogg
-    private var mute = true
-        set(value){
-            if (field == value) return
-            field = value
-            if (field) stopMusic() else startMusic()
-        }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
 
-        // Chargement des feuilles de sprites
-        SpriteSheet.load(R.drawable.decor, 5, 4, this)
-        SpriteSheet.load(R.drawable.car, 3, 1, this)
+        supportRequestWindowFeature(Window.FEATURE_NO_TITLE)
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_FULLSCREEN
+        )
+        setContentView(R.layout.activity_chargin)
 
-        // Par défaut on démarre sur la configuration map
-        configMap()
+        val handler = Handler(Looper.getMainLooper())
+        handler.postDelayed({
+            setContentView(R.layout.activity_main)
 
-        // Chargement du son
-        Log.d("MainActivity", "Chargement du son $bip")
+            val btnPlay: Button = findViewById(R.id.playBtnId)//Selection du BTN pour play
+            val btnCredits: Button = findViewById(R.id.creditsBtnId)//Selection du BTN pour credits
+            val btnExit: Button = findViewById(R.id.exitBtnId)//Selection du BTN pour exit
+
+            btnPlay.setOnClickListener {
+                setContentView(R.layout.activity_game)
+
+                // Chargement des feuilles de sprites
+                SpriteSheet.load(R.drawable.decor, 5, 4, this)
+                SpriteSheet.load(R.drawable.car, 3, 1, this)
+                configDrag()
+            }
+            btnCredits.setOnClickListener {
+                setContentView(R.layout.activity_credits)
+            }
+            btnExit.setOnClickListener {
+                finish()
+            }
+        }, 1000)
 
 
-        // On définit les actions des boutons
-        findViewById<Button>(R.id.buttonMap).setOnClickListener { configMap() }
-        findViewById<Button>(R.id.buttonDrag).setOnClickListener { configDrag() }
-        findViewById<Button>(R.id.buttonMute).setOnClickListener {
-            mute = !mute
-            (it as Button).text = if (mute) "Music on" else "Music off"
-        }
     }
 
-    private fun startMusic() {
-        if (mediaPlayer == null) {
-            mediaPlayer = MediaPlayer.create(this, R.raw.jungle)
-            mediaPlayer?.isLooping = true
-            mediaPlayer?.start()
-        }
-    }
 
-    private fun stopMusic() {
-        mediaPlayer?.stop()
-        mediaPlayer?.release()
-        mediaPlayer = null
-    }
 
 
     private fun configDrag() {
-        var target: Sprite? = null;
+        var target: Sprite? = null
         val room = TiledArea(R.drawable.decor, Decor(Decor.room))
 
-        // Création des différents éléments à afficher dans la vue
-        val list = SpriteList() // Notre liste de sprites
-        repeat(7){ // On crée plusieurs sprites aléatoires
-            list.add(BasicSprite(R.drawable.car,
-                (room.data.sizeX*Math.random()*room.w).toFloat(),
-                (room.data.sizeY*Math.random()*room.h).toFloat(),
-                (0..2).random()))
+        val list = SpriteList()
+        repeat(7) {
+            list.add(
+                BasicSprite(
+                    R.drawable.car,
+                    (room.data.sizeX * Math.random() * room.w).toFloat(),
+                    (room.data.sizeY * Math.random() * room.h).toFloat(),
+                    (0..2).random()
+                )
+            )
         }
-
-        // Configuration de gameView : tout ce qui est dans le apply concerne gameView
+//GameView
         gameView.apply {
             background = room
             sprite = list
             transform = FitTransform(this, room, Matrix.ScaleToFit.CENTER)
-            onTouch = {
-                point, event ->
-                when(event.action) {
-                    MotionEvent.ACTION_DOWN -> { // Sélection du sprite aux coordonnées cliquées
-                        val (x,y) = point
-                        target = list[x,y]
-                        if (target != null) soundPool.play(bip,1f,1f, 1,0,1f)
-                        target != null
-                    }
-                    MotionEvent.ACTION_MOVE -> { // Déplacement du sprite sélectionné
-                        (target as? BasicSprite)?.let {
-                            // On déplace le sprite sélectionné aux nouvelles coordonnées
-                            it.x = point[0]
-                            it.y = point[1]
-                            gameView.invalidate() // On demande la mise à jour
-                            true
-                        } ?: false
-                    }
-                    MotionEvent.ACTION_UP -> {  // Déselection
-                        target = null
-                        true
-                    }
-                    else -> false
+            update = {
+                list.list.forEach { sprite ->
+                    (sprite as? EnnemiSprite)?.update()
                 }
-
             }
-            invalidate() // On demande à rafraîchir la vue
+
+
+            //onTouch = { point, event ->
+            //    when (event.action) {
+            //        MotionEvent.ACTION_DOWN -> { // Sélection du sprite aux coordonnées cliquées
+            //            val (x, y) = point
+            //            target = list[x, y]
+            //            if (target != null) soundPool.play(bip, 1f, 1f, 1, 0, 1f)
+            //            target != null
+            //        }
+            //        MotionEvent.ACTION_MOVE -> { // Déplacement du sprite sélectionné
+            //            (target as? BasicSprite)?.let {
+            //                // On déplace le sprite sélectionné aux nouvelles coordonnées
+            //                it.x = point[0]
+            //                it.y = point[1]
+            //                true
+            //            } ?: false
+            //        }
+            //        MotionEvent.ACTION_UP -> {  // Déselection
+            //            target = null
+            //            true
+            //        }
+            //        else -> false
+            //    }
+            //
+            //}
         }
     }
 
 
-
-    private fun configMap() {
-         val map = TiledArea(R.drawable.decor, Decor(Decor.map))
-         val hero = BasicSprite(R.drawable.car, 8.5F*map.w, 4.5F*map.h)
-
-        // Configuration de gameView : tout ce qui est dans le apply concerne gameView
-        gameView.apply {
-            background = map // Equivalent à gameView.background = map
-            sprite = hero
-            transform = FocusTransform(this, map, hero,12)
-            onTouch = { point, event ->
-                    if (event.action == MotionEvent.ACTION_DOWN) {
-                        soundPool.play(bip,1f,1f, 1,0,1f)
-                        // Calcul de la direction du héro d'après le clic :
-                        var dx = point[0] - hero.x // calcule le vecteur entre le sprite et la zone touchée
-                        var dy = point[1] - hero.y
-                        //       Log.d("move", "$dx/$dy")
-                        if (abs(dx) > abs(dy)) { // calcule la direction principale du déplacement
-                            dx = if (dx > 0) map.w.toFloat() else -map.w.toFloat() // on se déplace de plus ou moins une case
-                            dy = 0f
-                        } else {
-                            dx = 0f
-                            dy = if (dy > 0) map.h.toFloat() else -map.h.toFloat()
-                        }
-
-                        // On applique le déplacement calculé
-                        hero.x += dx
-                        hero.y += dy
-                        gameView.invalidate()
-                        true
-                    } else false
-            }
-            invalidate() // On demande à rafraîchir la vue
-        }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        stopMusic()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        if (!mute) startMusic()
-    }
 
 }
