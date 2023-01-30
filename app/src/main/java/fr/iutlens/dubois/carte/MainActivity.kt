@@ -1,9 +1,6 @@
 package fr.iutlens.dubois.carte
 
 import android.graphics.Matrix
-import android.media.AudioAttributes
-import android.media.MediaPlayer
-import android.media.SoundPool
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
@@ -21,11 +18,7 @@ import kotlin.math.abs
 
 
 class MainActivity : AppCompatActivity() {
-
-
     private val gameView by lazy { findViewById<GameView>(R.id.gameView) }
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,12 +39,17 @@ class MainActivity : AppCompatActivity() {
             val btnExit: Button = findViewById(R.id.exitBtnId)//Selection du BTN pour exit
 
             btnPlay.setOnClickListener {
+
                 setContentView(R.layout.activity_game)
 
                 // Chargement des feuilles de sprites
-                SpriteSheet.load(R.drawable.decor, 5, 4, this)
-                SpriteSheet.load(R.drawable.car, 3, 1, this)
+                SpriteSheet.load(R.drawable.decor, 10, 8, this)
+                SpriteSheet.load(R.drawable.car, 1, 1, this)
                 configDrag()
+                val btnBack: Button = findViewById(R.id.Back)
+                btnBack.setOnClickListener {
+                    setContentView(R.layout.activity_main)
+                }
             }
             btnCredits.setOnClickListener {
                 setContentView(R.layout.activity_credits)
@@ -64,11 +62,8 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-
-
-
     private fun configDrag() {
-        var target: Sprite? = null
+        //var target: Sprite? = null
         val room = TiledArea(R.drawable.decor, Decor(Decor.room))
 
         val list = SpriteList()
@@ -77,12 +72,11 @@ class MainActivity : AppCompatActivity() {
                 BasicSprite(
                     R.drawable.car,
                     (room.data.sizeX * Math.random() * room.w).toFloat(),
-                    (room.data.sizeY * Math.random() * room.h).toFloat(),
-                    (0..2).random()
+                    (room.data.sizeY * Math.random() * room.h).toFloat()
                 )
             )
         }
-//GameView
+        //GameView
         gameView.apply {
             background = room
             sprite = list
@@ -92,35 +86,8 @@ class MainActivity : AppCompatActivity() {
                     (sprite as? EnnemiSprite)?.update()
                 }
             }
-
-
-            //onTouch = { point, event ->
-            //    when (event.action) {
-            //        MotionEvent.ACTION_DOWN -> { // Sélection du sprite aux coordonnées cliquées
-            //            val (x, y) = point
-            //            target = list[x, y]
-            //            if (target != null) soundPool.play(bip, 1f, 1f, 1, 0, 1f)
-            //            target != null
-            //        }
-            //        MotionEvent.ACTION_MOVE -> { // Déplacement du sprite sélectionné
-            //            (target as? BasicSprite)?.let {
-            //                // On déplace le sprite sélectionné aux nouvelles coordonnées
-            //                it.x = point[0]
-            //                it.y = point[1]
-            //                true
-            //            } ?: false
-            //        }
-            //        MotionEvent.ACTION_UP -> {  // Déselection
-            //            target = null
-            //            true
-            //        }
-            //        else -> false
-            //    }
-            //
-            //}
         }
     }
-
 
 
 }
