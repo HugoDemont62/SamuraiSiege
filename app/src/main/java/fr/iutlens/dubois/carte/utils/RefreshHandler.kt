@@ -10,10 +10,10 @@ import java.lang.ref.WeakReference
  */
 typealias TimerAction = ()-> Unit
 
-class RefreshHandler(action: TimerAction) : Handler(Looper.getMainLooper()) {
-    private val weak: WeakReference<TimerAction> = WeakReference<TimerAction>(action)
+class RefreshHandler(val action: TimerAction) : Handler(Looper.getMainLooper()) {
+
     override fun handleMessage(msg: Message) {
-        weak.get()?.invoke()
+        action()
     }
 
     fun scheduleRefresh(delayMillis: Long) {

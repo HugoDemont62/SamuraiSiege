@@ -10,8 +10,8 @@ class TiledArea(private val sprite: SpriteSheet,  val data: TileMap) : Sprite {
 
     val w  = sprite.spriteWidth
     val h  = sprite.spriteHeight
-    private val sizeX  = data.sizeX
-    private val sizeY  = data.sizeY
+    val sizeX  = data.sizeX
+    val sizeY  = data.sizeY
 
     override fun paint(canvas: Canvas) {
         for (y in 0 until sizeY) {
@@ -27,4 +27,6 @@ class TiledArea(private val sprite: SpriteSheet,  val data: TileMap) : Sprite {
     }
 
     override val boundingBox = RectF(0f,0f,w*sizeX.toFloat(),h*sizeY.toFloat())
+    override fun update() {
+    }
 }

@@ -5,24 +5,18 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
-import android.view.MotionEvent
 import android.view.Window
 import android.view.WindowManager
 import android.widget.Button
 import fr.iutlens.dubois.carte.sprite.*
 import fr.iutlens.dubois.carte.transform.FitTransform
-import fr.iutlens.dubois.carte.transform.FocusTransform
 import fr.iutlens.dubois.carte.utils.SpriteSheet
-import kotlin.math.abs
-
+import kotlinx.coroutines.*
 
 class MainActivity : AppCompatActivity() {
     private val gameView by lazy { findViewById<GameView>(R.id.gameView) }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE)
         window.setFlags(
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -39,17 +33,11 @@ class MainActivity : AppCompatActivity() {
             val btnExit: Button = findViewById(R.id.exitBtnId)//Selection du BTN pour exit
 
             btnPlay.setOnClickListener {
-
                 setContentView(R.layout.activity_game)
-
                 // Chargement des feuilles de sprites
-                SpriteSheet.load(R.drawable.decor, 10, 8, this)
+                SpriteSheet.load(R.drawable.decor, 5, 5, this)
                 SpriteSheet.load(R.drawable.car, 1, 1, this)
                 configDrag()
-                val btnBack: Button = findViewById(R.id.Back)
-                btnBack.setOnClickListener {
-                    setContentView(R.layout.activity_main)
-                }
             }
             btnCredits.setOnClickListener {
                 setContentView(R.layout.activity_credits)
@@ -58,36 +46,43 @@ class MainActivity : AppCompatActivity() {
                 finish()
             }
         }, 1000)
-
-
     }
 
     private fun configDrag() {
-        //var target: Sprite? = null
-        val room = TiledArea(R.drawable.decor, Decor(Decor.room))
-
-        val list = SpriteList()
-        repeat(7) {
-            list.add(
-                BasicSprite(
-                    R.drawable.car,
-                    (room.data.sizeX * Math.random() * room.w).toFloat(),
-                    (room.data.sizeY * Math.random() * room.h).toFloat()
-                )
-            )
+        val room = TiledArea(R.drawable.decor, Decor(Decor.laby))
+        // Création des différents éléments à afficher dans la vue
+        val list = SpriteList() // Notre liste de sprites
+        val distanceMap = DistanceMap(room.data, room.sizeX / 2 to room.sizeY / 2) { it == 0 }
+        val scope = CoroutineScope(Job() + Dispatchers.Main)
+        scope.launch {
+            // New coroutine
+            generate(list, room, distanceMap)
         }
-        //GameView
+        // Configuration de gameView : tout ce qui est dans le apply concerne gameView
         gameView.apply {
             background = room
             sprite = list
             transform = FitTransform(this, room, Matrix.ScaleToFit.CENTER)
             update = {
-                list.list.forEach { sprite ->
-                    (sprite as? EnnemiSprite)?.update()
-                }
+                list.update()
             }
         }
     }
 
+    //Generate with timer (Couroutine)
+    private suspend fun generate(
+        list: SpriteList,
+        room: TiledArea,
+        distanceMap: DistanceMap
+    ) {
+        withContext(Dispatchers.Main) {
+            repeat(100) {
+                delay(200)
+                // On crée plusieurs sprites aléatoires
+                list.add(EnnemiSprite(R.drawable.car, room, distanceMap))
+            }
+        }
+
+    }
 
 }

@@ -4,7 +4,9 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color.argb
 import android.graphics.RectF
+import android.provider.SyncStateContract.Helpers.update
 import android.util.AttributeSet
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import fr.iutlens.dubois.carte.sprite.BasicSprite
@@ -33,6 +35,7 @@ class GameView : View, View.OnTouchListener {
 
     var transform : CameraTransform? = null
     var onTouch : ((FloatArray,MotionEvent) -> Boolean)? = null
+//    var update : (() -> Unit)? = null
 
 
     init {
@@ -42,7 +45,7 @@ class GameView : View, View.OnTouchListener {
             SpriteSheet.load(R.drawable.decor, 5, 4, this.context)
             SpriteSheet.load(R.drawable.car, 3, 1, this.context)
             // Création des différents éléments à afficher dans la vue
-            val tileView = TiledArea(R.drawable.decor, Decor())
+            val tileView = TiledArea(R.drawable.decor, Decor(Decor.laby))
             background = tileView
             val car = BasicSprite(R.drawable.car, 3F * tileView.w, 8F * tileView.h)
             sprite = car
@@ -54,22 +57,19 @@ class GameView : View, View.OnTouchListener {
         setOnTouchListener(this)
 
 
-         //Gestion du rafraichissement de la vue. Le code (juste en dessous)
-         //sera appelé toutes les 30 ms
-        timer = RefreshHandler{
+        // Gestion du rafraichissement de la vue. Le code (juste en dessous)
+        // sera appelé toutes les 30 ms
+        timer = RefreshHandler {
             if (this.isShown) { // Si la vue est visible
                 timer?.scheduleRefresh(30) // programme le prochain rafraichissement
-                update?.invoke()
+                  update?.invoke()
+//                Log.d("GameView","timer")
+                //sprite?.update()
                 invalidate() // demande à rafraichir la vue
             }
+        }.apply {
+            scheduleRefresh(30)
         }
-
-        timer?.scheduleRefresh(30)
-
-
-
-
-
     }
 
     override fun onTouch(view: View?, event: MotionEvent): Boolean {

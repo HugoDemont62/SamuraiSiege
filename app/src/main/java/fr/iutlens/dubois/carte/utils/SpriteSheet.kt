@@ -21,6 +21,7 @@ class SpriteSheet(val bitmap: Bitmap, val sizeX: Int, val sizeY: Int) {
         canvas.drawBitmap(get(ndx), x, y, paint)
     }
 
+
     companion object {
         private val map: MutableMap<Int, SpriteSheet> = HashMap<Int, SpriteSheet>()
         private val paint = Paint().apply { isAntiAlias = true }
