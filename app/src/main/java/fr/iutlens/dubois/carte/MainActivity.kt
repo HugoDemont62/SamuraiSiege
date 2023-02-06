@@ -37,7 +37,8 @@ class MainActivity : AppCompatActivity() {
                 // Chargement des feuilles de sprites
                 SpriteSheet.load(R.drawable.decor, 5, 5, this)
                 SpriteSheet.load(R.drawable.car, 1, 1, this)
-                configDrag()
+                SpriteSheet.load(R.drawable.tower, 1, 1, this)
+                towerDefense() //set Game tower Defense
             }
             btnCredits.setOnClickListener {
                 setContentView(R.layout.activity_credits)
@@ -48,15 +49,23 @@ class MainActivity : AppCompatActivity() {
         }, 1000)
     }
 
-    private fun configDrag() {
+    private fun towerDefense() {
         val room = TiledArea(R.drawable.decor, Decor(Decor.laby))
         // Création des différents éléments à afficher dans la vue
         val list = SpriteList() // Notre liste de sprites
-        val distanceMap = DistanceMap(room.data, room.sizeX / 2 to room.sizeY / 2) { it == 0 }
+        val distanceMap = DistanceMap(room.data, room.sizeX / 2 to room.sizeY / 2) {
+            it == 0
+        }
+
+        // Création de la tour et des tirs
+
+
+
         val scope = CoroutineScope(Job() + Dispatchers.Main)
         scope.launch {
             // New coroutine
             generate(list, room, distanceMap)
+            TowerSprite(R.drawable.tower, list, room.sizeX / 2 to room.sizeY / 2, room)
         }
         // Configuration de gameView : tout ce qui est dans le apply concerne gameView
         gameView.apply {
@@ -76,8 +85,8 @@ class MainActivity : AppCompatActivity() {
         distanceMap: DistanceMap
     ) {
         withContext(Dispatchers.Main) {
-            repeat(100) {
-                delay(200)
+            repeat(10) {
+                delay(100)
                 // On crée plusieurs sprites aléatoires
                 list.add(EnnemiSprite(R.drawable.car, room, distanceMap))
             }

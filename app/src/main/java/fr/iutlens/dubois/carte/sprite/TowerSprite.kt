@@ -1,42 +1,38 @@
 package fr.iutlens.dubois.carte.sprite
-import fr.iutlens.dubois.carte.DistanceMap
 
-class TowerSprite () : BasicSprite(){
-    var speed = 0.1f // speed of bullet
-    var alpha = 0f // alpha of bullet
-    var nextCoordinate = DistanceMap.nextMove(coordinate) // next coordinate of bullet
-    val paint = android.graphics.Paint().apply {
-        color = android.graphics.Color.BLUE
-        style = android.graphics.Paint.Style.FILL
-    }
-    // Infleger des degats à EnnemieSprite
-    fun hitEnnemi(ennemi: EnnemiSprite) {
-        ennemi.pv -= 10
-    }
-    // Tirer une balle
-    fun shoot() {
-        alpha = (alpha + speed).coerceAtMost(1f)
-        x = (coordinate.first * (1f - alpha) + alpha * nextCoordinate.first + 0.5f) * tiledArea.w
-        y = (coordinate.second * (1f - alpha) + alpha * nextCoordinate.second + 0.5f) * tiledArea.h
-        if (alpha == 1f) {
-            coordinate = nextCoordinate
-            alpha = 0f
-            nextCoordinate = distanceMap.nextMove(coordinate)
-            if (nextCoordinate == coordinate) {
-                coordinate = spawnPoint(tiledArea.data)
-                nextCoordinate = distanceMap.nextMove(coordinate)
-            }
+import android.graphics.Canvas
+import androidx.core.graphics.withTranslation
+
+
+class TowerSprite(
+    sprite: Int,
+    val list: SpriteList,
+    val coordinate: Pair<Int, Int>,
+    val tiledArea: TiledArea
+) : BasicSprite(
+    sprite,
+    (coordinate.first + 0.5f) * tiledArea.w,
+    (coordinate.second + 0.5f) * tiledArea.h
+) {
+    override fun paint(canvas: Canvas) =
+        canvas.withTranslation(x, y) {
+            spriteSheet.paint(this, ndx, -w2, -h2)
         }
+
+    //variables
+    var pv = 100
+
+    fun hitEnnemi(ennemi: EnnemiSprite?) {
+        ennemi?.let { it.pv -= 10 }
+    }
+    fun hit(){
+        pv-=1
     }
 
 
-
-
-
-
-
-
-
-
-
+    override fun update() {
+        list.list.filter { it.boundingBox.intersect(boundingBox) }.forEach { hitEnnemi(it as? EnnemiSprite)  }
+        list.list.filter { it.boundingBox.intersect(boundingBox) }.forEach { _ -> hit()  }
+    }
 }
+

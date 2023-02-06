@@ -5,15 +5,12 @@ import androidx.core.graphics.withTranslation
 import fr.iutlens.dubois.carte.DistanceMap
 
 
-
-fun spawnPoint(tileMap: TileMap): Pair<Int, Int> {
+private fun spawnPoint(tileMap: TileMap): Pair<Int, Int> {
     val x = tileMap.sizeX - 1
     val y = (0 until tileMap.sizeY).random()
     return x to y
 
 }
-
-
 class EnnemiSprite(
     sprite: Int,
     val tiledArea: TiledArea,
@@ -35,15 +32,20 @@ class EnnemiSprite(
     var speed = 0.1f
     var alpha = 0f
     var nextCoordinate = distanceMap.nextMove(coordinate)
-    val paint = android.graphics.Paint().apply {
+    val paint100 = android.graphics.Paint().apply {
         color = android.graphics.Color.GREEN
         style = android.graphics.Paint.Style.FILL
     }
+    val paint50 = android.graphics.Paint().apply {
+        color = android.graphics.Color.RED
+        style = android.graphics.Paint.Style.FILL
+    }
+
     //Barre de vie
     override fun paint(canvas: Canvas) =
         canvas.withTranslation(x, y) {
             spriteSheet.paint(this, ndx, -w2, -h2)
-            canvas.drawRect(-w2, -h2, -w2 + 2 * w2 * pv / 100, -h2 + 5f, paint)
+            canvas.drawRect(-w2, -h2, -w2 + 2 * w2 * pv / 100, -h2 + 5f, if (pv > 50) paint100 else paint50)
         }
 
     override fun update() {
