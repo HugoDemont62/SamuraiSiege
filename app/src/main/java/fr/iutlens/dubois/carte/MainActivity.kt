@@ -58,14 +58,13 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Création de la tour et des tirs
-
-
+        list.add(TowerSprite(R.drawable.tower, list, room.sizeX / 2 to room.sizeY / 2, room))
 
         val scope = CoroutineScope(Job() + Dispatchers.Main)
         scope.launch {
             // New coroutine
             generate(list, room, distanceMap)
-            TowerSprite(R.drawable.tower, list, room.sizeX / 2 to room.sizeY / 2, room)
+
         }
         // Configuration de gameView : tout ce qui est dans le apply concerne gameView
         gameView.apply {
@@ -74,6 +73,7 @@ class MainActivity : AppCompatActivity() {
             transform = FitTransform(this, room, Matrix.ScaleToFit.CENTER)
             update = {
                 list.update()
+                list.list.removeAll { it is EnnemiSprite && it.pv < 0 }
             }
         }
     }
