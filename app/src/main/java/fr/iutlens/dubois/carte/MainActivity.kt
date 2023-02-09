@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.view.MotionEvent
 import android.view.Window
 import android.view.WindowManager
 import android.widget.Button
@@ -55,34 +56,52 @@ class MainActivity : AppCompatActivity() {
 
     private fun towerDefense() {
         val room = TiledArea(R.drawable.decor, Decor(Decor.laby))
-        // Création des différents éléments à afficher dans la vue
+        // Les lists de sprites
         val list = SpriteList() // Notre liste de sprites
+        val listEnnemi = SpriteList() // Liste des ennemis
         val distanceMap = DistanceMap(room.data, room.sizeX / room.sizeX to room.sizeY / 2) {
             it == 0
         }
-
+        list.add(listEnnemi)
+        listEnnemi.add(EnnemiSprite(R.drawable.ennemi, room, distanceMap))
         // Création de la tour et des tirs
-        list.add(TowerSprite(R.drawable.tower, list, room.sizeX / 2 to room.sizeY / 2, room))
-        list.add(TowerSprite(R.drawable.objectif, list, room.sizeX / room.sizeX to room.sizeY / 2, room))
+        list.add(TowerSprite(R.drawable.tower, listEnnemi, room.sizeX / 2 to room.sizeY / 2, room))
+
+        // Création de l'objectif
+        list.add(
+            ObjectifSprite(
+                R.drawable.objectif,
+                listEnnemi,
+                room.sizeX / room.sizeX to room.sizeY / 2,
+                room
+            )
+        )
 
         val scope = CoroutineScope(Job() + Dispatchers.Main)
         scope.launch {
             // New coroutine
-            generate(list, room, distanceMap)
+            generate(listEnnemi, room, distanceMap)
 
         }
         // Configuration de gameView : tout ce qui est dans le apply concerne gameView
         gameView.apply {
             background = room
             sprite = list
-            transform = FitTransform(this, room, Matrix.ScaleToFit.CENTER) // Modifier la taille de la map sur le visu
+            transform = FitTransform(
+                this,
+                room,
+                Matrix.ScaleToFit.CENTER
+            ) // Modifier la taille de la map sur le visu
             update = {
                 list.update()
-                list.list.removeAll { it is EnnemiSprite && it.pv < 0 } // Kills des ennemies
-
+                listEnnemi.list.removeAll { it is EnnemiSprite && it.pv < 0 } // Kills des ennemies
+                list.list.removeAll { it is ObjectifSprite && it.pv < 0 } // Kills des tirs
             }
         }
     }
+
+
+
 
     //Generate with timer (Couroutine)
     private suspend fun generate(

@@ -71,7 +71,7 @@ class GameView : View, View.OnTouchListener {
     }
 
     override fun onTouch(view: View?, event: MotionEvent): Boolean {
-        if (timer != null && !timer!!.isRunning()) timer?.scheduleRefresh(30)
+        if (timer != null && !timer!!.isRunning()) timer?.scheduleRefresh(30) // relance le timer quand il est touché (pour éviter qu'il s'arrête)
         val point = transform?.getPoint(event.x, event.y) ?: return false
         return onTouch?.invoke(point, event) ?: false
     }
