@@ -13,10 +13,12 @@ import fr.iutlens.dubois.carte.transform.FitTransform
 import fr.iutlens.dubois.carte.utils.SpriteSheet
 import kotlinx.coroutines.*
 
+@Suppress("DEPRECATION")
 class MainActivity : AppCompatActivity() {
     private val gameView by lazy { findViewById<GameView>(R.id.gameView) }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        //Setting du mode fullscreen
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE)
         window.setFlags(
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -24,7 +26,7 @@ class MainActivity : AppCompatActivity() {
         )
         setContentView(R.layout.activity_chargin)
 
-        val handler = Handler(Looper.getMainLooper())
+        val handler = Handler(Looper.getMainLooper()) // Handler pour le chargement principal
         handler.postDelayed({
             setContentView(R.layout.activity_main)
 
@@ -34,10 +36,11 @@ class MainActivity : AppCompatActivity() {
 
             btnPlay.setOnClickListener {
                 setContentView(R.layout.activity_game)
-                // Chargement des feuilles de sprites
-                SpriteSheet.load(R.drawable.decor, 5, 5, this)
-                SpriteSheet.load(R.drawable.car, 1, 1, this)
+                // Chargement des feuilles de sprites - Peut etre voir un code moins lourd ?
+                SpriteSheet.load(R.drawable.decor, 8, 6, this)
+                SpriteSheet.load(R.drawable.ennemi, 1, 1, this)
                 SpriteSheet.load(R.drawable.tower, 1, 1, this)
+                SpriteSheet.load(R.drawable.cball, 1, 1, this)
                 towerDefense() //set Game tower Defense
             }
             btnCredits.setOnClickListener {
@@ -70,10 +73,11 @@ class MainActivity : AppCompatActivity() {
         gameView.apply {
             background = room
             sprite = list
-            transform = FitTransform(this, room, Matrix.ScaleToFit.CENTER)
+            transform = FitTransform(this, room, Matrix.ScaleToFit.CENTER) // Modifier la taille de la map sur le visu
             update = {
                 list.update()
-                list.list.removeAll { it is EnnemiSprite && it.pv < 0 }
+                list.list.removeAll { it is EnnemiSprite && it.pv < 0 } // Kills des ennemies
+
             }
         }
     }
@@ -86,9 +90,9 @@ class MainActivity : AppCompatActivity() {
     ) {
         withContext(Dispatchers.Main) {
             repeat(10) {
-                delay(100)
+                delay(1)
                 // On crée plusieurs sprites aléatoires
-                list.add(EnnemiSprite(R.drawable.car, room, distanceMap))
+                list.add(EnnemiSprite(R.drawable.ennemi, room, distanceMap))
             }
         }
 

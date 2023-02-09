@@ -4,9 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color.argb
 import android.graphics.RectF
-import android.provider.SyncStateContract.Helpers.update
 import android.util.AttributeSet
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import fr.iutlens.dubois.carte.sprite.BasicSprite
@@ -43,11 +41,11 @@ class GameView : View, View.OnTouchListener {
             // Normalement, c'est l'activité qui configure la vue
             // Chargement des feuilles de sprites
             SpriteSheet.load(R.drawable.decor, 5, 4, this.context)
-            SpriteSheet.load(R.drawable.car, 3, 1, this.context)
+            SpriteSheet.load(R.drawable.ennemi, 3, 1, this.context)
             // Création des différents éléments à afficher dans la vue
             val tileView = TiledArea(R.drawable.decor, Decor(Decor.laby))
             background = tileView
-            val car = BasicSprite(R.drawable.car, 3F * tileView.w, 8F * tileView.h)
+            val car = BasicSprite(R.drawable.ennemi, 3F * tileView.w, 8F * tileView.h)
             sprite = car
             transform = FocusTransform(this, tileView, car, 12)
 //            transform = FitTransform(this,tileView,Matrix.ScaleToFit.CENTER)
@@ -73,6 +71,7 @@ class GameView : View, View.OnTouchListener {
     }
 
     override fun onTouch(view: View?, event: MotionEvent): Boolean {
+        if (timer != null && !timer!!.isRunning()) timer?.scheduleRefresh(30)
         val point = transform?.getPoint(event.x, event.y) ?: return false
         return onTouch?.invoke(point, event) ?: false
     }

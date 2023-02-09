@@ -16,16 +16,18 @@ class TowerSprite(
 
     //variables
     var pv = 100
+    var down = 0
     private val paint100 = android.graphics.Paint().apply {//Mettre une barre de vie verte
-        color = android.graphics.Color.GREEN
+        color = android.graphics.Color.RED
         style = android.graphics.Paint.Style.FILL
     }
 
     fun hitEnnemi(ennemi: EnnemiSprite?) {
         ennemi?.let { it.pv -= 1 } //Faire des degats toutes les 10 frames
-        //Les kills se font dans le main activity
+        }
+    fun stopEnnemi(ennemi: EnnemiSprite?) {
+        ennemi?.let { it.speed = 0f } //Arreter l'ennemi
     }
-
     //Barre de vie de la tour
     override fun paint(canvas: Canvas) =
         canvas.withTranslation(x, y) {
@@ -40,10 +42,22 @@ class TowerSprite(
                 )
             }
         }
-
     override fun update() {
-        list.list.filter { it.boundingBox.intersect(boundingBox) }
-            .forEach { hitEnnemi(it as? EnnemiSprite) }
+        if (down > 0) down--
+        if (down == 0){
+            //On regarde si il y a un ennemi dans la zone de tir
+            list.list.filter {
+                it.boundingBox.intersect(boundingBox)
+            }.forEach {//First ?
+                hitEnnemi(it as? EnnemiSprite)
+                down = 100
+            }
+        }
+        list.list.filter {
+            it.boundingBox.intersect(boundingBox)
+        }.forEach {//First ?
+            stopEnnemi(it as? EnnemiSprite)
+        }
     }
 }
 

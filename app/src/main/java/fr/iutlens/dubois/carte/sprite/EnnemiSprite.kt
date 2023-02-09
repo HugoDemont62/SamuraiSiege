@@ -29,7 +29,7 @@ class EnnemiSprite(
     )
 
     var pv = 100
-    private var speed = 0.1f
+    var speed = 0.1f
     private var alpha = 0f
     private var nextCoordinate = distanceMap.nextMove(coordinate)
     private val paint100 = android.graphics.Paint().apply {

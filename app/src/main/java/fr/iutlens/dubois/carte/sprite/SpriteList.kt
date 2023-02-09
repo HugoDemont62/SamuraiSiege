@@ -5,7 +5,7 @@ import android.graphics.Canvas
 class SpriteList : Sprite {
 
     val list = ArrayList<Sprite>()
-
+//Faut creer des lists différentes pour chaque NameSprite
     fun add(sprite: Sprite) = list.add(sprite)
 
     operator fun get(x: Float, y: Float): Sprite? =
