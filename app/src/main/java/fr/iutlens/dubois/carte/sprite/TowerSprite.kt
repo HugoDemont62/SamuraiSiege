@@ -16,7 +16,7 @@ class TowerSprite(
 
     //variables
     var pv = 100
-    var down = 0
+    var down = 0 //CoolDown
     private val paint100 = android.graphics.Paint().apply {//Mettre une barre de vie verte
         color = android.graphics.Color.RED
         style = android.graphics.Paint.Style.FILL
@@ -45,7 +45,6 @@ class TowerSprite(
     override fun update() {
         if (down > 0) down--
         if (down == 0){
-            //On regarde si il y a un ennemi dans la zone de tir
             list.list.filter {
                 it.boundingBox.intersect(boundingBox)
             }.forEach {//First ?

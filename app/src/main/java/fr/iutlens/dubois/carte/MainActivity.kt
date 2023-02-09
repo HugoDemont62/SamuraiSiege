@@ -41,6 +41,7 @@ class MainActivity : AppCompatActivity() {
                 SpriteSheet.load(R.drawable.ennemi, 1, 1, this)
                 SpriteSheet.load(R.drawable.tower, 1, 1, this)
                 SpriteSheet.load(R.drawable.cball, 1, 1, this)
+                SpriteSheet.load(R.drawable.objectif, 1, 1, this)
                 towerDefense() //set Game tower Defense
             }
             btnCredits.setOnClickListener {
@@ -56,12 +57,13 @@ class MainActivity : AppCompatActivity() {
         val room = TiledArea(R.drawable.decor, Decor(Decor.laby))
         // Création des différents éléments à afficher dans la vue
         val list = SpriteList() // Notre liste de sprites
-        val distanceMap = DistanceMap(room.data, room.sizeX / 2 to room.sizeY / 2) {
+        val distanceMap = DistanceMap(room.data, room.sizeX / room.sizeX to room.sizeY / 2) {
             it == 0
         }
 
         // Création de la tour et des tirs
         list.add(TowerSprite(R.drawable.tower, list, room.sizeX / 2 to room.sizeY / 2, room))
+        list.add(TowerSprite(R.drawable.objectif, list, room.sizeX / room.sizeX to room.sizeY / 2, room))
 
         val scope = CoroutineScope(Job() + Dispatchers.Main)
         scope.launch {
@@ -90,7 +92,7 @@ class MainActivity : AppCompatActivity() {
     ) {
         withContext(Dispatchers.Main) {
             repeat(10) {
-                delay(1)
+                delay(100)
                 // On crée plusieurs sprites aléatoires
                 list.add(EnnemiSprite(R.drawable.ennemi, room, distanceMap))
             }
