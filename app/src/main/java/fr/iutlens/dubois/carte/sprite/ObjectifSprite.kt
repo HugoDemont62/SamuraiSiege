@@ -15,7 +15,7 @@ class ObjectifSprite(
 ) {
 
     //variables
-    var pv = 20000 //PV de l'objectif
+    var pv = 2000 //PV de l'objectif
     private val paint100 = android.graphics.Paint().apply {//Mettre une barre de vie verte
         color = android.graphics.Color.YELLOW
         style = android.graphics.Paint.Style.FILL
@@ -30,26 +30,25 @@ class ObjectifSprite(
     }
 
     //Barre de vie de la tour
-    override fun paint(canvas: Canvas) =
-        canvas.withTranslation(x, y) {
-            spriteSheet.paint(this, ndx, -w2, -h2)
-            if (pv > pv / 2) { // si PV inf a 50
-                canvas.drawRect(
-                    -w2,
-                    -h2,
-                    -w2 + 2 * w2,
-                    -h2 + 5f,
-                    paint100
-                )
-            }
+    override fun paint(canvas: Canvas) = canvas.withTranslation(x, y) {
+        spriteSheet.paint(this, ndx, -w2, -h2)
+        if (pv > pv / 2) { // si PV inf a 50
+            canvas.drawRect(
+                -w2,
+                -h2,
+                -w2 + 2 * w2,
+                -h2 + 5f,
+                paint100
+            )
         }
+    }
 
     override fun update() {
         list.list.filter {
             it.boundingBox.intersect(boundingBox)
         }.forEach {//First ?
             stopEnnemi(it as? EnnemiSprite)// Stop les ennemies a son contact
-            println(pv)
+            //println(pv)
         }
     }
 }
