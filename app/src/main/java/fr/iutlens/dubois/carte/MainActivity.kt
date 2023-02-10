@@ -1,6 +1,7 @@
 package fr.iutlens.dubois.carte
 
 import android.graphics.Matrix
+import android.graphics.RectF
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
@@ -55,6 +56,7 @@ class MainActivity : AppCompatActivity() {
       }, 1000)
    }
 
+   // Game Tower Defense
    private fun towerDefense() {
       val room = TiledArea(R.drawable.decor, Decor(Decor.laby))
       // Les lists de sprites
@@ -89,7 +91,7 @@ class MainActivity : AppCompatActivity() {
          background = room
          sprite = list
          transform =
-            FocusTransform(this, room, center, 30) // Modifier la taille de la map sur le visu
+            FocusTransform(this, room, center, 28) // Modifier la taille de la map sur le visu
          update = {
             list.update()
             listEnnemi.list.removeAll { it is EnnemiSprite && it.pv == 0 } // Kills des ennemies
@@ -99,7 +101,28 @@ class MainActivity : AppCompatActivity() {
          var pointer = -1
          onTouch = { point, event ->
             when (event.action) {
-               MotionEvent.ACTION_DOWN -> { // Sélection du sprite aux coordonnées cliquéesoffset?.let {
+               MotionEvent.ACTION_DOWN -> {
+                  //On selectionne l'ennemi le plus proche
+                  val rect = RectF(
+                     point[0] - 20,
+                     point[1] - 20,
+                     point[0] + 20,
+                     point[1] + 20
+                  )
+                  // On met des degats sur l'ennemi
+                  listEnnemi.list.filter {
+                     it is EnnemiSprite && it.boundingBox.intersect(rect)
+                  }.forEach {
+                     val ennemiSprite = it as? EnnemiSprite
+                      ennemiSprite?.pv = ennemiSprite?.pv?.minus(50) ?: 0
+                     println("Ennemi touché")
+                  }
+                  //listEnnemi.list.removeAll { it is EnnemiSprite && it.boundingBox.intersect(rect) }
+                  // target = listEnnemi[point[0], point[1]] // On récupère l'ennemi
+                  //   target?.let {
+                  //      listEnnemi.list.remove(it)  // On supprime l'ennemi
+                  //      println("Ennemi touché")
+                  //   }
                   if (offset == null) {
                      offset = point[0]
                      pointer = event.getPointerId(0)
@@ -118,12 +141,11 @@ class MainActivity : AppCompatActivity() {
                }
                MotionEvent.ACTION_UP -> {  // Déselection
                   offset = null
-                  pointer =-1
+                  pointer = -1
                   false
                }
                else -> false
             }
-
          }
       }
    }
