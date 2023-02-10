@@ -79,7 +79,6 @@ class MainActivity : AppCompatActivity() {
       )
       val center = BasicSprite(R.drawable.tower, room.sizeX * room.w / 2f, room.sizeY * room.h / 2f)
 
-
       val scope = CoroutineScope(Job() + Dispatchers.Main)
       scope.launch {
          // New coroutine

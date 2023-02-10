@@ -48,7 +48,6 @@ class ObjectifSprite(
             it.boundingBox.intersect(boundingBox)
         }.forEach {//First ?
             stopEnnemi(it as? EnnemiSprite)// Stop les ennemies a son contact
-            //println(pv)
         }
     }
 }
