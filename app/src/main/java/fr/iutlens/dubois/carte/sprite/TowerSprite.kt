@@ -42,7 +42,7 @@ class TowerSprite(
                 it != this && it is BasicSprite && distance(it) < 15 * tiledArea.w
             }.minByOrNull { distance(it as BasicSprite) }?.let {
                 hitEnnemi(it as? EnnemiSprite)
-                down = 100
+                down = 1
             }
         }
         list.list.filter {

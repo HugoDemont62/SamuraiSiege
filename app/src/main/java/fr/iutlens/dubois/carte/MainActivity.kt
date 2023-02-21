@@ -1,6 +1,5 @@
 package fr.iutlens.dubois.carte
 
-import android.graphics.Matrix
 import android.graphics.RectF
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -10,8 +9,8 @@ import android.view.MotionEvent
 import android.view.Window
 import android.view.WindowManager
 import android.widget.Button
+import com.google.android.material.tabs.TabLayout.Tab
 import fr.iutlens.dubois.carte.sprite.*
-import fr.iutlens.dubois.carte.transform.FitTransform
 import fr.iutlens.dubois.carte.transform.FocusTransform
 import fr.iutlens.dubois.carte.utils.SpriteSheet
 import kotlinx.coroutines.*
@@ -45,6 +44,7 @@ class MainActivity : AppCompatActivity() {
             SpriteSheet.load(R.drawable.tower, 1, 1, this)
             SpriteSheet.load(R.drawable.cball, 1, 1, this)
             SpriteSheet.load(R.drawable.objectif, 1, 1, this)
+            SpriteSheet.load(R.drawable.cross, 1, 1, this)
             towerDefense() //set Game tower Defense
          }
          btnCredits.setOnClickListener {
@@ -58,20 +58,29 @@ class MainActivity : AppCompatActivity() {
 
    // Game Tower Defense
    private fun towerDefense() {
+      // tableau des Vagues d'ennemis
+
+
       val room = TiledArea(R.drawable.decor, Decor(Decor.laby))
       // Les lists de sprites
       val list = SpriteList() // Notre liste de sprites
       val listEnnemi = SpriteList() // Liste des ennemis
+      val listObjectif = SpriteList() // Liste des objectifs
+      val listTower = SpriteList() // Liste des tours
       val distanceMap = DistanceMap(room.data, room.sizeX / room.sizeX to room.sizeY / room.sizeY) {
          it == 0
       }
       list.add(listEnnemi)
+      list.add(listObjectif)
+      list.add(listTower)
+
+
+      // Création des ennemis
       listEnnemi.add(EnnemiSprite(R.drawable.ennemi, room, distanceMap))
       // Création de la tour et des tirs
-      list.add(TowerSprite(R.drawable.tower, listEnnemi, room.sizeX / 3 to room.sizeY / 2, room))
-
+      listTower.add(TowerSprite(R.drawable.tower, listEnnemi, room.sizeX / 3 to room.sizeY / 2, room))
       // Création de l'objectif
-      list.add(
+      listObjectif.add(
          ObjectifSprite(
             R.drawable.objectif,
             listEnnemi,
@@ -79,12 +88,20 @@ class MainActivity : AppCompatActivity() {
             room
          )
       )
+
+
+      //val cross = CrossSprite(R.drawable.cross)
       val center = BasicSprite(R.drawable.tower, room.sizeX * room.w / 2f, room.sizeY * room.h / 2f)
 
       val scope = CoroutineScope(Job() + Dispatchers.Main)
       scope.launch {
          // New coroutine
-         generate(listEnnemi, room, distanceMap)
+         generate(
+            listEnnemi,
+            //vague,
+            room,
+            distanceMap
+         )
       }
       // Configuration de gameView : tout ce qui est dans le apply concerne gameView
       gameView.apply {
@@ -95,7 +112,10 @@ class MainActivity : AppCompatActivity() {
          update = {
             list.update()
             listEnnemi.list.removeAll { it is EnnemiSprite && it.pv == 0 } // Kills des ennemies
-            list.list.removeAll { it is ObjectifSprite && it.pv == 0 } // Kills des tirs
+            list.list.removeAll { it is ObjectifSprite && it.pv == 0 } // Kills des
+            if(listEnnemi.list.size == 0 && listObjectif.list.size == 1) {
+               setContentView(R.layout.activity_win)
+            }
          }
          var offset: Float? = null
          var pointer = -1
@@ -111,18 +131,11 @@ class MainActivity : AppCompatActivity() {
                   )
                   // On met des degats sur l'ennemi
                   listEnnemi.list.filter {
-                     it is EnnemiSprite && it.boundingBox.intersect(rect)
-                  }.forEach {
-                     val ennemiSprite = it as? EnnemiSprite
-                      ennemiSprite?.pv = ennemiSprite?.pv?.minus(50) ?: 0
-                     println("Ennemi touché")
+                     it is EnnemiSprite && it.boundingBox.intersect(rect) // On filtre les ennemis
+                  }.forEach { // On parcours les ennemis
+                     val ennemiSprite = it as? EnnemiSprite // On caste l'ennemi
+                     ennemiSprite?.pv = ennemiSprite?.pv?.minus(50) ?: 0 //50 pv de degats
                   }
-                  //listEnnemi.list.removeAll { it is EnnemiSprite && it.boundingBox.intersect(rect) }
-                  // target = listEnnemi[point[0], point[1]] // On récupère l'ennemi
-                  //   target?.let {
-                  //      listEnnemi.list.remove(it)  // On supprime l'ennemi
-                  //      println("Ennemi touché")
-                  //   }
                   if (offset == null) {
                      offset = point[0]
                      pointer = event.getPointerId(0)
@@ -153,6 +166,7 @@ class MainActivity : AppCompatActivity() {
    //Generate with timer (Couroutine)
    private suspend fun generate(
       list: SpriteList,
+      //vague: VagueTab,
       room: TiledArea,
       distanceMap: DistanceMap
    ) {
@@ -163,7 +177,5 @@ class MainActivity : AppCompatActivity() {
             list.add(EnnemiSprite(R.drawable.ennemi, room, distanceMap))
          }
       }
-
    }
-
 }
