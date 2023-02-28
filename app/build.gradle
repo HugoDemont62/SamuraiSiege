@@ -7,7 +7,7 @@ android {
     compileSdk 33
 
     defaultConfig {
-        applicationId "fr.iutlens.dubois.carte"
+        applicationId "fr.hugodemont.samuraisiege"
         minSdk 21
         targetSdk 33
         versionCode 1
@@ -29,7 +29,7 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
-    namespace 'fr.iutlens.dubois.carte'
+    namespace 'fr.hugodemont.samuraisiege'
 }
 
 dependencies {
