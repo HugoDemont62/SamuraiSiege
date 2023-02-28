@@ -1,5 +1,6 @@
 package fr.iutlens.dubois.carte
 
+import android.annotation.SuppressLint
 import android.graphics.RectF
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -17,6 +18,7 @@ import kotlinx.coroutines.*
 @Suppress("DEPRECATION")
 class MainActivity : AppCompatActivity() {
    private val gameView by lazy { findViewById<GameView>(R.id.gameView) }
+   @SuppressLint("MissingInflatedId", "WrongViewCast")
    override fun onCreate(savedInstanceState: Bundle?) {
       super.onCreate(savedInstanceState)
       //Setting du mode fullscreen
@@ -35,6 +37,8 @@ class MainActivity : AppCompatActivity() {
          val btnCredits: Button = findViewById(R.id.creditsBtnId)//Selection du BTN pour credits
          val btnExit: Button = findViewById(R.id.exitBtnId)//Selection du BTN pour exit
 
+
+
          btnPlay.setOnClickListener {
             setContentView(R.layout.activity_game)
             // Chargement des feuilles de sprites - Peut etre voir un code moins lourd ?
@@ -43,7 +47,7 @@ class MainActivity : AppCompatActivity() {
             SpriteSheet.load(R.drawable.tower, 1, 1, this)
             SpriteSheet.load(R.drawable.cball, 1, 1, this)
             SpriteSheet.load(R.drawable.objectif, 1, 1, this)
-            SpriteSheet.load(R.drawable.shop, 2, 1, this)
+            SpriteSheet.load(R.drawable.shop, 1, 1, this)
             towerDefense() //set Game tower Defense
          }
          btnCredits.setOnClickListener {
@@ -91,6 +95,20 @@ class MainActivity : AppCompatActivity() {
             room
          )
       )
+
+      // Création du shop
+      //val btnShop: Button = findViewById(R.id.shopBtnId)
+      //btnShop.setOnClickListener {
+      //   //ajout d'une tour au centre de l'écran
+      //   listTower.add(
+      //      TowerSprite(
+      //         R.drawable.tower,
+      //         listEnnemi,
+      //         room.sizeX / 2 to room.sizeY / 2,
+      //         room
+      //      )
+      //   )
+      //}
 
       //val cross = CrossSprite(R.drawable.cross)
       val center = BasicSprite(R.drawable.tower, room.sizeX * room.w / 2f, room.sizeY * room.h / 2f)
