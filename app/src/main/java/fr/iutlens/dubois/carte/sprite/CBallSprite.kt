@@ -25,7 +25,7 @@ class CBallSprite(
         }
 
     fun hitEnnemi(ennemi: EnnemiSprite?) {
-        ennemi?.let { it.pv -= 1 } //Faire des degats toutes les 10 frames
+        ennemi?.let { it.ennemiPv -= 1 } //Faire des degats toutes les 10 frames
     }
 
 

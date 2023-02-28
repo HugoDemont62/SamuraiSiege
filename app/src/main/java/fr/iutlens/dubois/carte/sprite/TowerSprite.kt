@@ -22,11 +22,11 @@ class TowerSprite(
     }
 
     fun hitEnnemi(ennemi: EnnemiSprite?) {
-        ennemi?.let { it.pv -= 80 } //Faire des degats toutes les 10 frames
+        ennemi?.let { it.ennemiPv -= 10 } //Faire des degats toutes les 10 frames
     }
 
     fun stopEnnemi(ennemi: EnnemiSprite?) {
-        ennemi?.let { it.speed = 0f } //Arreter l'ennemi
+        ennemi?.let { it.speedEnnemi = 0f } //Arreter l'ennemi
     }
 
     //Barre de vie de la tour
@@ -42,7 +42,7 @@ class TowerSprite(
                 it != this && it is BasicSprite && distance(it) < 15 * tiledArea.w
             }.minByOrNull { distance(it as BasicSprite) }?.let {
                 hitEnnemi(it as? EnnemiSprite)
-                down = 1
+                down = 20
             }
         }
         list.list.filter {

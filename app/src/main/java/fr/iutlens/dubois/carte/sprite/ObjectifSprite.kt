@@ -22,10 +22,11 @@ class ObjectifSprite(
    }
 
    fun stopEnnemi(ennemi: EnnemiSprite?) {
-      ennemi?.let { it.speed = 0f } //Arreter l'ennemi
+      ennemi?.let { it.speedEnnemi = 0f } //Arreter l'ennemi
       //pv en moins sur l'objectif
       if (pv > 0) {
          pv -= 1
+         println(pv)
       }
    }
 
