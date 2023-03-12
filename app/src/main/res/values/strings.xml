@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">ProjectY</string>
+    <string name="app_name">Samurai Siege</string>
+    <string name="le_button_shop">Le button shop</string>
 </resources>
