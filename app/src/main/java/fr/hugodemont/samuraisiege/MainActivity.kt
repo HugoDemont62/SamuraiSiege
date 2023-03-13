@@ -1,5 +1,6 @@
 package fr.hugodemont.samuraisiege
 
+import android.annotation.SuppressLint
 import android.graphics.RectF
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -10,6 +11,8 @@ import android.view.Window
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.TextView
+import android.widget.Toast
 import fr.hugodemont.samuraisiege.sprite.*
 import fr.hugodemont.samuraisiege.transform.FocusTransform
 import fr.hugodemont.samuraisiege.utils.SpriteSheet
@@ -18,6 +21,7 @@ import kotlinx.coroutines.*
 @Suppress("DEPRECATION")
 class MainActivity : AppCompatActivity() {
     private val gameView by lazy { findViewById<GameView>(R.id.gameView) }
+    private var money = 0 // argent du joueur
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //Setting du mode fullscreen
@@ -35,8 +39,6 @@ class MainActivity : AppCompatActivity() {
             val btnPlay: Button = findViewById(R.id.playBtnId)//Selection du BTN pour play
             val btnCredits: Button = findViewById(R.id.creditsBtnId)//Selection du BTN pour credits
             val btnExit: Button = findViewById(R.id.exitBtnId)//Selection du BTN pour exit
-
-
 
             btnPlay.setOnClickListener {
                 setContentView(R.layout.activity_game)
@@ -60,15 +62,20 @@ class MainActivity : AppCompatActivity() {
     }
 
     // Game Tower Defense
+    @SuppressLint("SuspiciousIndentation")
     private fun towerDefense() {
         // tableau des Vagues d'ennemis
         var vagueNb = 0 // = vagues[0]
         val room = TiledArea(R.drawable.decor, Decor(Decor.laby))
+        //set le nombre d'argent
+        val textArgent: TextView = findViewById(R.id.argentTextViewId)
+
         // Les lists de sprites
         val list = SpriteList() // Notre liste de sprites
         val listEnnemi = SpriteList() // Liste des ennemis
         val listObjectif = SpriteList() // Liste des objectifs
         val listTower = SpriteList() // Liste des tours
+
         val distanceMap =
             DistanceMap(room.data, room.sizeX / room.sizeX to room.sizeY / room.sizeY) {
                 it == 0
@@ -78,26 +85,8 @@ class MainActivity : AppCompatActivity() {
         list.add(listTower)
 
         val btnShop: ImageButton = findViewById(R.id.shopId)//Selection du BTN pour shop
-        btnShop.setOnClickListener {
-            listTower.add(
-                TowerSprite(
-                    R.drawable.tower,
-                    listEnnemi,
-                    room.sizeX / 2 to room.sizeY / 2,
-                    room
-                )
-            )
-        }
 
-        // Création de la tour et des tirs
-        listTower.add(
-            TowerSprite(
-                R.drawable.tower,
-                listEnnemi,
-                room.sizeX / 3 to room.sizeY / 2,
-                room
-            )
-        )
+
         // Création de l'objectif
         listObjectif.add(
             ObjectifSprite(
@@ -128,6 +117,39 @@ class MainActivity : AppCompatActivity() {
             transform =
                 FocusTransform(this, room, center, 28) // Modifier la taille de la map sur le visu
             update = {
+                textArgent.text = money.toString() // Texte pour l'argent
+                val btnFix: Button = findViewById(R.id.acceptBtnId)//Selection du BTN pour fixer la tour
+                btnShop.setOnClickListener {
+                    if (money >= 100) { // cost of tower 101 €
+                        money -= 100
+                        listTower.add(
+                            TowerSprite(
+                                R.drawable.tower,
+                                listEnnemi,
+                                room.sizeX / 2 to room.sizeY / 2,
+                                room,
+                                true
+                            )
+                        )
+                        btnFix.visibility = Button.VISIBLE
+                        btnShop.visibility= Button.INVISIBLE
+                        //Quand une tour est placee, on affiche un bouton pour la fixer
+                        btnFix.setOnClickListener {
+                            listTower.list.forEach {
+                                if (it is TowerSprite) {
+                                    it.move = true
+                                }
+                                btnFix.visibility = Button.INVISIBLE
+                            }
+                        }
+                    } else {
+                        Toast.makeText(
+                            applicationContext,
+                            "You dont have money to buy tower : 100 cost",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
                 list.update()
                 listEnnemi.list.removeAll { it is EnnemiSprite && it.ennemiPv <= 0 } // Kills des ennemies
                 listObjectif.list.removeAll { it is ObjectifSprite && it.pv <= 0 } // Kills de l'objectif
@@ -174,10 +196,10 @@ class MainActivity : AppCompatActivity() {
                         listEnnemi.list.filter {
                             it is EnnemiSprite && it.boundingBox.intersect(rect) // On filtre les ennemis
                         }.forEach { // On parcours les ennemis
-
                             val ennemiSprite = it as? EnnemiSprite // On caste l'ennemi
                             ennemiSprite?.ennemiPv =
                                 ennemiSprite?.ennemiPv?.minus(50) ?: 0 //50 pv de degats
+                            money += 10
                             println(ennemiSprite?.ennemiPv)
                         }
                         if (offset == null) {
@@ -195,12 +217,14 @@ class MainActivity : AppCompatActivity() {
                                     gameView.invalidate() // On demande la mise à jour
                                 }
                                 offset != null
-                            }else {
+                            } else {
                                 (target as? TowerSprite)?.let {
-                                    // On déplace le sprite sélectionné aux nouvelles coordonnées
-                                    it.x = point[0]
-                                    it.y = point[1]
-                                    gameView.invalidate() // On demande la mise à jour
+                                    if (it.move == true) {
+                                        // On déplace le sprite sélectionné aux nouvelles coordonnées
+                                        it.x = point[0]
+                                        it.y = point[1]
+                                        gameView.invalidate() // On demande la mise à jour
+                                    }
                                     true
                                 } ?: false
                             }
