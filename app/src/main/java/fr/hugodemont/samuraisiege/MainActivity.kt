@@ -1,6 +1,5 @@
 package fr.hugodemont.samuraisiege
 
-import android.annotation.SuppressLint
 import android.graphics.RectF
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -16,7 +15,6 @@ import android.widget.Toast
 import fr.hugodemont.samuraisiege.sprite.*
 import fr.hugodemont.samuraisiege.transform.FocusTransform
 import fr.hugodemont.samuraisiege.utils.SpriteSheet
-import fr.iutlens.dubois.carte.R
 import kotlinx.coroutines.*
 
 @Suppress("DEPRECATION")
@@ -44,13 +42,12 @@ class MainActivity : AppCompatActivity() {
             btnPlay.setOnClickListener {
                 setContentView(R.layout.activity_game)
                 // Chargement des feuilles de sprites - Peut etre voir un code moins lourd ?
-                SpriteSheet.load(R.drawable.decor, 9, 8, this)
+                SpriteSheet.load(R.drawable.decor, 8, 6, this)
                 SpriteSheet.load(R.drawable.ennemi, 1, 1, this)
                 SpriteSheet.load(R.drawable.tower, 1, 1, this)
                 SpriteSheet.load(R.drawable.cball, 1, 1, this)
                 SpriteSheet.load(R.drawable.objectif, 1, 1, this)
                 towerDefense() //set Game tower Defense
-
             }
             btnCredits.setOnClickListener {
                 setContentView(R.layout.activity_credits)
@@ -63,7 +60,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     // Game Tower Defense
-    @SuppressLint("SuspiciousIndentation")
     private fun towerDefense() {
         // tableau des Vagues d'ennemis
         var vagueNb = 0 // = vagues[0]
@@ -76,7 +72,6 @@ class MainActivity : AppCompatActivity() {
         val listEnnemi = SpriteList() // Liste des ennemis
         val listObjectif = SpriteList() // Liste des objectifs
         val listTower = SpriteList() // Liste des tours
-
         val distanceMap =
             DistanceMap(room.data, room.sizeX / room.sizeX to room.sizeY / room.sizeY) {
                 it == 0
@@ -84,9 +79,23 @@ class MainActivity : AppCompatActivity() {
         list.add(listEnnemi)
         list.add(listObjectif)
         list.add(listTower)
-
+        val btnFix: Button = findViewById(R.id.acceptBtnId)//Selection du BTN pour fixer la tour
         val btnShop: ImageButton = findViewById(R.id.shopId)//Selection du BTN pour shop
-
+        btnFix.setOnClickListener {
+            listTower.list.forEach {//Selection de la tour
+                if (it is TowerSprite && it.move){
+                    if (validPlaceTower(it, room)){
+                        it.move = false
+                    }else{
+                        Toast.makeText(
+                            applicationContext,
+                            "You can't place tower here",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            }
+        }
 
         // Création de l'objectif
         listObjectif.add(
@@ -97,7 +106,6 @@ class MainActivity : AppCompatActivity() {
                 room
             )
         )
-
         //val cross = CrossSprite(R.drawable.cross)
         val center =
             BasicSprite(R.drawable.tower, room.sizeX * room.w / 2f, room.sizeY * room.h / 2f)
@@ -119,7 +127,6 @@ class MainActivity : AppCompatActivity() {
                 FocusTransform(this, room, center, 28) // Modifier la taille de la map sur le visu
             update = {
                 textArgent.text = money.toString() // Texte pour l'argent
-                val btnFix: Button = findViewById(R.id.acceptBtnId)//Selection du BTN pour fixer la tour
                 btnShop.setOnClickListener {
                     if (money >= 100) { // cost of tower 101 €
                         money -= 100
@@ -132,17 +139,7 @@ class MainActivity : AppCompatActivity() {
                                 true
                             )
                         )
-                        btnFix.visibility = Button.VISIBLE
-                        btnShop.visibility= Button.INVISIBLE
                         //Quand une tour est placee, on affiche un bouton pour la fixer
-                        btnFix.setOnClickListener {
-                            listTower.list.forEach {
-                                if (it is TowerSprite) {
-                                    it.move = true
-                                }
-                                btnFix.visibility = Button.INVISIBLE
-                            }
-                        }
                     } else {
                         Toast.makeText(
                             applicationContext,
@@ -220,10 +217,11 @@ class MainActivity : AppCompatActivity() {
                                 offset != null
                             } else {
                                 (target as? TowerSprite)?.let {
-                                    if (it.move == true) {
+                                    if (it.move) {
                                         // On déplace le sprite sélectionné aux nouvelles coordonnées
                                         it.x = point[0]
                                         it.y = point[1]
+                                        btnFix.isEnabled = validPlaceTower(it,room)
                                         gameView.invalidate() // On demande la mise à jour
                                     }
                                     true
@@ -241,6 +239,11 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun validPlaceTower(it: TowerSprite, room: TiledArea): Boolean {
+        if (room.data[it.x.toInt() / room.w, it.y.toInt() / room.h] == 2) return true
+        return false
     }
 
     //Generate with timer (Couroutine)
