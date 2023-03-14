@@ -8,6 +8,7 @@ class TowerSprite(
     val list: SpriteList,
     coordinate: Pair<Int, Int>,
     val tiledArea: TiledArea,
+    var move: Boolean
 ) : BasicSprite(
     sprite,
     (coordinate.first + 0.5f) * tiledArea.w,
@@ -16,10 +17,6 @@ class TowerSprite(
 
     //variables
     var down = 0 //CoolDown
-    //private val paint100 = android.graphics.Paint().apply {//Mettre une barre de vie verte
-    //    color = android.graphics.Color.RED
-    //    style = android.graphics.Paint.Style.FILL
-    //}
 
     fun hitEnnemi(ennemi: EnnemiSprite?) {
         ennemi?.let { it.ennemiPv -= 10 } //Faire des degats toutes les 10 frames
@@ -41,8 +38,10 @@ class TowerSprite(
             list.list.filter {
                 it != this && it is BasicSprite && distance(it) < 15 * tiledArea.w
             }.minByOrNull { distance(it as BasicSprite) }?.let {
-                hitEnnemi(it as? EnnemiSprite)
-                down = 20
+                if (!move){
+                    hitEnnemi(it as? EnnemiSprite)
+                    down = 20
+                }
             }
         }
         list.list.filter {

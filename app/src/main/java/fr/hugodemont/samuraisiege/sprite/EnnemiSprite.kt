@@ -32,10 +32,6 @@ class EnnemiSprite(
       ennemiPv
    )
 
-
-
-
-
    private var alpha = 0f
    private var nextCoordinate = distanceMap.nextMove(coordinate)
    private val paint100 = android.graphics.Paint().apply {
