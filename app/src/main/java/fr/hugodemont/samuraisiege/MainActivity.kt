@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
             btnPlay.setOnClickListener {
                 setContentView(R.layout.activity_game)
                 // Chargement des feuilles de sprites - Peut etre voir un code moins lourd ?
-                SpriteSheet.load(R.drawable.decor, 8, 6, this)
+                SpriteSheet.load(R.drawable.decor, 10, 8, this)
                 SpriteSheet.load(R.drawable.ennemi, 1, 1, this)
                 SpriteSheet.load(R.drawable.tower, 1, 1, this)
                 SpriteSheet.load(R.drawable.cball, 1, 1, this)
