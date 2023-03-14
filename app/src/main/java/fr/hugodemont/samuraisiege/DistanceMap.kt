@@ -32,13 +32,21 @@ class DistanceMap(var tileMap: TileMap, var target: Coordinate, var passable: (I
             val coordinate = queue.removeFirst()
             val dist = map[coordinate]!! + 1
             direction.map { coordinate + it }
-                .filter { (it in tileMap) && (it !in map) && passable(tileMap[it.first, it.second]) }
+                .filter {
+                    (it in tileMap) && (it !in map) && passable(
+                        tileMap.get(
+                            it.first,
+                            it.second
+                        )
+                    )
+                }
                 .forEach {
                     map[it] = dist
                     queue.addLast(it)
                 }
         }
     }
+
     fun nextMove(coordinate: Coordinate): Coordinate {
         val distance = map[coordinate]?.minus(1) ?: -1
         //Log.d("nextMove","$coordinate $distance ")

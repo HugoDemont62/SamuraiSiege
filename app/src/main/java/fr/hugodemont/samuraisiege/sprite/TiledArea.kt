@@ -18,7 +18,7 @@ class TiledArea(private val sprite: SpriteSheet, val data: TileMap) : Sprite {
             for (x in 0 until sizeX) {
                 sprite.paint(
                     canvas,
-                    data[x, y],
+                    data.get(x, y),
                     (x * w).toFloat(),
                     (y * h).toFloat()
                 )
