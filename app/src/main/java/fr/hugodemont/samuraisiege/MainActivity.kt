@@ -13,6 +13,7 @@ import android.widget.ImageButton
 import fr.hugodemont.samuraisiege.sprite.*
 import fr.hugodemont.samuraisiege.transform.FocusTransform
 import fr.hugodemont.samuraisiege.utils.SpriteSheet
+import fr.iutlens.dubois.carte.R
 import kotlinx.coroutines.*
 
 @Suppress("DEPRECATION")
