@@ -1,7 +1,6 @@
 package fr.hugodemont.samuraisiege
 
 import android.graphics.RectF
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -12,6 +11,7 @@ import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import fr.hugodemont.samuraisiege.sprite.*
 import fr.hugodemont.samuraisiege.transform.FocusTransform
 import fr.hugodemont.samuraisiege.utils.SpriteSheet
@@ -74,19 +74,21 @@ class MainActivity : AppCompatActivity() {
         val listTower = SpriteList() // Liste des tours
         val distanceMap =
             DistanceMap(room.data, room.sizeX / room.sizeX to room.sizeY / room.sizeY) {
-                it == 0
+                it == 0 || it == 1  // Passe par le chemin (0)
             }
         list.add(listEnnemi)
         list.add(listObjectif)
         list.add(listTower)
         val btnFix: Button = findViewById(R.id.acceptBtnId)//Selection du BTN pour fixer la tour
         val btnShop: ImageButton = findViewById(R.id.shopId)//Selection du BTN pour shop
+        var maxTower = 0
         btnFix.setOnClickListener {
             listTower.list.forEach {//Selection de la tour
-                if (it is TowerSprite && it.move){
-                    if (validPlaceTower(it, room)){
+                if (it is TowerSprite && it.move) {
+                    if (validPlaceTower(it, room)) {
                         it.move = false
-                    }else{
+                        maxTower--
+                    } else {
                         Toast.makeText(
                             applicationContext,
                             "You can't place tower here",
@@ -96,7 +98,6 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-
         // Création de l'objectif
         listObjectif.add(
             ObjectifSprite(
@@ -129,16 +130,25 @@ class MainActivity : AppCompatActivity() {
                 textArgent.text = money.toString() // Texte pour l'argent
                 btnShop.setOnClickListener {
                     if (money >= 100) { // cost of tower 101 €
-                        money -= 100
-                        listTower.add(
-                            TowerSprite(
-                                R.drawable.tower,
-                                listEnnemi,
-                                room.sizeX / 2 to room.sizeY / 2,
-                                room,
-                                true
+                        if (maxTower == 0) {
+                            money -= 100
+                            listTower.add(
+                                TowerSprite(
+                                    R.drawable.tower,
+                                    listEnnemi,
+                                    room.sizeX / 2 to room.sizeY / 2,
+                                    room,
+                                    true
+                                )
                             )
-                        )
+                            maxTower++
+                        } else {
+                            Toast.makeText(
+                                applicationContext,
+                                "You can't place more than one tower",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
                         //Quand une tour est placee, on affiche un bouton pour la fixer
                     } else {
                         Toast.makeText(
@@ -197,7 +207,7 @@ class MainActivity : AppCompatActivity() {
                             val ennemiSprite = it as? EnnemiSprite // On caste l'ennemi
                             ennemiSprite?.ennemiPv =
                                 ennemiSprite?.ennemiPv?.minus(50) ?: 0 //50 pv de degats
-                            money += 10
+                            money += 10 // On gagne de l'argent (1)
                             println(ennemiSprite?.ennemiPv)
                         }
                         if (offset == null) {
@@ -221,7 +231,7 @@ class MainActivity : AppCompatActivity() {
                                         // On déplace le sprite sélectionné aux nouvelles coordonnées
                                         it.x = point[0]
                                         it.y = point[1]
-                                        btnFix.isEnabled = validPlaceTower(it,room)
+                                        btnFix.isEnabled = validPlaceTower(it, room)
                                         gameView.invalidate() // On demande la mise à jour
                                     }
                                     true
