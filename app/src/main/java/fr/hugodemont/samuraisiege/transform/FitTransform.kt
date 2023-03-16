@@ -4,7 +4,7 @@ import android.graphics.Matrix
 import fr.hugodemont.samuraisiege.GameView
 import fr.hugodemont.samuraisiege.sprite.Sprite
 
-class FitTransform(val gameView: GameView, val sprite: Sprite, val fitMode : Matrix.ScaleToFit) :
+class FitTransform(val gameView: GameView, val sprite: Sprite, val fitMode: Matrix.ScaleToFit) :
     CameraTransform {
 
     private val transform = Matrix()
@@ -13,7 +13,7 @@ class FitTransform(val gameView: GameView, val sprite: Sprite, val fitMode : Mat
     private var point = FloatArray(2)
 
     override fun getMatrix(): Matrix {
-        transform.setRectToRect(sprite.boundingBox,gameView.boundingBox,fitMode)
+        transform.setRectToRect(sprite.boundingBox, gameView.boundingBox, fitMode)
         transform.invert(reverse)
         return transform
     }

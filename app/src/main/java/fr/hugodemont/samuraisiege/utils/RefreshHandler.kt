@@ -7,7 +7,7 @@ import android.os.Message
 /**
  * Created by dubois on 27/12/2017.
  */
-typealias TimerAction = ()-> Unit
+typealias TimerAction = () -> Unit
 
 class RefreshHandler(val action: TimerAction) : Handler(Looper.getMainLooper()) {
 

@@ -1,8 +1,9 @@
 package fr.hugodemont.samuraisiege.utils
 
 import android.content.Context
-import android.graphics.*
-import java.util.HashMap
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Paint
 
 class SpriteSheet(val bitmap: Bitmap, val sizeX: Int, val sizeY: Int) {
 
