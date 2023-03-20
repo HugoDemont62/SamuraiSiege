@@ -5,7 +5,8 @@ import android.graphics.Canvas
 class SpriteList : Sprite {
 
     val list = ArrayList<Sprite>()
-//Faut creer des lists différentes pour chaque NameSprite
+
+    //Faut creer des lists différentes pour chaque NameSprite
     fun add(sprite: Sprite) = list.add(sprite)
 
     fun hitTouch(ennemiSprite: EnnemiSprite) = ennemiSprite.ennemiPv

@@ -22,9 +22,9 @@ class TowerSprite(
         ennemi?.let { it.ennemiPv -= 10 } //Faire des degats toutes les 10 frames
     }
 
-    fun stopEnnemi(ennemi: EnnemiSprite?) {
-        ennemi?.let { it.speedEnnemi = 0f } //Arreter l'ennemi
-    }
+    //fun stopEnnemi(ennemi: EnnemiSprite?) {
+    //    ennemi?.let { it.speedEnnemi = 0f } //Arreter l'ennemi
+    //}
 
     //Barre de vie de la tour
     override fun paint(canvas: Canvas) =
@@ -38,17 +38,17 @@ class TowerSprite(
             list.list.filter {
                 it != this && it is BasicSprite && distance(it) < 15 * tiledArea.w
             }.minByOrNull { distance(it as BasicSprite) }?.let {
-                if (!move){
+                if (!move) {
                     hitEnnemi(it as? EnnemiSprite)
                     down = 20
                 }
             }
         }
-        list.list.filter {
-            it.boundingBox.intersect(boundingBox)
-        }.forEach {//First ?
-            stopEnnemi(it as? EnnemiSprite)
-        }
+        //list.list.filter {
+        //    it.boundingBox.intersect(boundingBox)
+        //}.forEach {//First ?
+        //    stopEnnemi(it as? EnnemiSprite)
+        //}
     }
 
     fun square(x: Float) = x * x
