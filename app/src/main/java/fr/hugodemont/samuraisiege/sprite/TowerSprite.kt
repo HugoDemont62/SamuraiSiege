@@ -44,11 +44,6 @@ class TowerSprite(
                 }
             }
         }
-        //list.list.filter {
-        //    it.boundingBox.intersect(boundingBox)
-        //}.forEach {//First ?
-        //    stopEnnemi(it as? EnnemiSprite)
-        //}
     }
 
     fun square(x: Float) = x * x

@@ -1,6 +1,7 @@
 package fr.hugodemont.samuraisiege
 
 import android.graphics.RectF
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -20,7 +21,9 @@ import kotlinx.coroutines.*
 @Suppress("DEPRECATION")
 class MainActivity : AppCompatActivity() {
     private val gameView by lazy { findViewById<GameView>(R.id.gameView) }
-    private var money = 0 // argent du joueur
+    private var money = 90 // argent du joueur
+    private var mediaPlayer: MediaPlayer? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //Setting du mode fullscreen
@@ -56,17 +59,29 @@ class MainActivity : AppCompatActivity() {
                 finish()
             }
         }, 1000)
-
     }
 
+    private fun startMusic() {
+        if (mediaPlayer == null) {
+            mediaPlayer = MediaPlayer.create(this, R.raw.samurai)
+            mediaPlayer?.isLooping = true
+            mediaPlayer?.start()
+        }
+    }
+
+    private fun stopMusic() {
+        mediaPlayer?.stop()
+        mediaPlayer?.release()
+        mediaPlayer = null
+    }
     // Game Tower Defense
     private fun towerDefense() {
+        startMusic()//Start music au lancement du jeu
         // tableau des Vagues d'ennemis
         var vagueNb = 0 // = vagues[0]
         val room = TiledArea(R.drawable.decor, Decor(Decor.laby))
         //set le nombre d'argent
         val textArgent: TextView = findViewById(R.id.argentTextViewId)
-
         // Les lists de sprites
         val list = SpriteList() // Notre liste de sprites
         val listEnnemi = SpriteList() // Liste des ennemis
@@ -129,7 +144,7 @@ class MainActivity : AppCompatActivity() {
             update = {
                 textArgent.text = money.toString() // Texte pour l'argent
                 btnShop.setOnClickListener {
-                    if (money >= 100) { // cost of tower 101 €
+                    if (money >= 100) { // cost of tower 100 €
                         if (maxTower == 0) {
                             money -= 100
                             listTower.add(
@@ -192,7 +207,6 @@ class MainActivity : AppCompatActivity() {
                         val (x, y) = point
                         target = listTower[x, y]
                         target != null
-
                         //On selectionne l'ennemi le plus proche
                         val rect = RectF(
                             point[0] - 30,
@@ -207,6 +221,7 @@ class MainActivity : AppCompatActivity() {
                             val ennemiSprite = it as? EnnemiSprite // On caste l'ennemi
                             ennemiSprite?.ennemiPv =
                                 ennemiSprite?.ennemiPv?.minus(50) ?: 0 //50 pv de degats
+
                             money += 10 // On gagne de l'argent (1)
                             println(ennemiSprite?.ennemiPv)
                         }
@@ -278,5 +293,13 @@ class MainActivity : AppCompatActivity() {
                 )
             }
         }
+    }
+    override fun onPause() {//Lors d'une sortie de l'app je coupe le son
+        super.onPause()
+        stopMusic()
+    }
+    override fun onResume() {//Quand je rentre de nouveau dans le jeu, je reset le son
+        super.onResume()
+        startMusic()
     }
 }
