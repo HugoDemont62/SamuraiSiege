@@ -26,7 +26,7 @@ class FocusTransform(
     }
 
     override fun getMatrix(): Matrix {
-        val tilesY = 1.0f * gameView.boundingBox.height() / tiledArea.h
+        val tilesY = 1.5f * gameView.boundingBox.height() / tiledArea.h
         val scale = tilesY / minTiles
         val dxMax =
             (tiledArea.sizeX * tiledArea.w / 2 - gameView.boundingBox.centerX() / scale) * 3f
