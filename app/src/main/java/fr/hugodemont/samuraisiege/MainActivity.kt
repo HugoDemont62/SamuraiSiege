@@ -97,8 +97,8 @@ class MainActivity : AppCompatActivity() {
         val listObjectif = SpriteList() // Liste des objectifs
         val listTower = SpriteList() // Liste des tours
         val distanceMap =
-            DistanceMap(room.data, room.sizeX / room.sizeX to room.sizeY / room.sizeY) {
-                it == 0 || it == 1  // Passe par le chemin (0)
+            DistanceMap(room.data, (room.sizeX / room.sizeX) to (room.sizeY / room.sizeY)) {
+                it == 0 || it == 1  // Passe par le chemin (0,1)
             }
         list.add(listEnnemi)
         list.add(listObjectif)
@@ -166,7 +166,7 @@ class MainActivity : AppCompatActivity() {
                                 TowerSprite(
                                     R.drawable.tower,
                                     listEnnemi,
-                                    room.sizeX / 2 to room.sizeY / 2,
+                                    (room.sizeX/2)+1  to (room.sizeY / 3),
                                     room,
                                     true
                                 )
@@ -189,8 +189,12 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
                 list.update()
-                listEnnemi.list.removeAll { it is EnnemiSprite && it.ennemiPv <= 0 } // Kills des ennemies
+                if (listEnnemi.list.removeAll { it is EnnemiSprite && it.ennemiPv <= 0 }) {
+                    money += 10 // J'ajoute 10 € à chaque ennemi tué
+                }
+                // Kills des ennemies
                 listObjectif.list.removeAll { it is ObjectifSprite && it.pv <= 0 } // Kills de l'objectif
+
                 if (listObjectif.list.size == 0) {
                     setContentView(R.layout.activity_lose) // Déplacer sur le layout Activity loose
                     Toast.makeText(
@@ -219,6 +223,7 @@ class MainActivity : AppCompatActivity() {
                         }
                     } else if (vagueNb >= 0) {
                         println(vagueNb)
+                        money += 1000//1000 à la fin de la vague
                         job = scope.launch {
                             // New coroutine
                             generate(
@@ -257,7 +262,6 @@ class MainActivity : AppCompatActivity() {
                             ennemiSprite?.ennemiPv =
                                 ennemiSprite?.ennemiPv?.minus(50) ?: 0 //50 pv de degats
                             money += 10 // On gagne de l'argent (1)
-                            println(ennemiSprite?.ennemiPv)
                         }
                         if (offset == null) {
                             offset = point[0]
