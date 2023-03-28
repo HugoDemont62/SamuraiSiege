@@ -43,7 +43,6 @@ class ObjectifSprite(
             )
         }
     }
-
     override fun update() {
         list.list.filter {
             it.boundingBox.intersect(boundingBox)

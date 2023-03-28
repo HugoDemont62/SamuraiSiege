@@ -15,7 +15,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/herbe"
-        android:contentDescription="oui" />
+        android:contentDescription="@string/oui"
+        tools:ignore="VisualLintBounds" />
 
     <fr.hugodemont.samuraisiege.GameView
         android:id="@+id/gameView"
@@ -36,9 +37,11 @@
         android:layout_marginBottom="16dp"
         android:background="@android:color/transparent"
         android:contentDescription="@string/le_button_shop"
+        android:minHeight="48dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/shop" />
+        app:srcCompat="@drawable/shop"
+        tools:ignore="RedundantDescriptionCheck" />
 
     <TextView
         android:id="@+id/argentTextViewId"
@@ -46,8 +49,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginTop="44dp"
-        android:text="TextView"
+        android:text="@string/textview"
         android:textColor="@color/DungeonTowerHex1"
+        android:textSize="34sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -57,21 +61,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="60dp"
         android:layout_marginBottom="16dp"
-        android:text="Validate position"
+        android:text="@string/validate_position"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/shopId" />
-
-    <Button
-        android:id="@+id/buttonMute"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="269dp"
-        android:layout_marginEnd="45dp"
-        android:text="Button"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/gameView"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

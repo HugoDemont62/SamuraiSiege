@@ -7,11 +7,8 @@ import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
-import fr.hugodemont.samuraisiege.sprite.BasicSprite
 import fr.hugodemont.samuraisiege.sprite.Sprite
-import fr.hugodemont.samuraisiege.sprite.TiledArea
 import fr.hugodemont.samuraisiege.transform.CameraTransform
-import fr.hugodemont.samuraisiege.transform.FocusTransform
 import fr.hugodemont.samuraisiege.utils.RefreshHandler
 import fr.hugodemont.samuraisiege.utils.SpriteSheet
 
@@ -44,11 +41,11 @@ class GameView : View, View.OnTouchListener {
             SpriteSheet.load(R.drawable.decor, 5, 4, this.context)
             SpriteSheet.load(R.drawable.ennemi, 3, 1, this.context)
             // Création des différents éléments à afficher dans la vue
-            val tileView = TiledArea(R.drawable.decor, Decor(Decor.laby))
-            background = tileView
-            val car = BasicSprite(R.drawable.ennemi, 3F * tileView.w, 8F * tileView.h)
+         //  val tileView = TiledArea(R.drawable.decor, Decor(Decor.laby))
+           // background = tileView
+         /*   val car = BasicSprite(R.drawable.ennemi, 3F * tileView.w, 8F * tileView.h)
             sprite = car
-            transform = FocusTransform(this, tileView, car, 12)
+            transform = FocusTransform(this, tileView, car, 12)*/
 //            transform = FitTransform(this,tileView,Matrix.ScaleToFit.CENTER)
         }
 

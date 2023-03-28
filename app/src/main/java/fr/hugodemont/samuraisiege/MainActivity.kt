@@ -1,11 +1,14 @@
 package fr.hugodemont.samuraisiege
 
+import android.annotation.SuppressLint
+import android.content.Intent
 import android.graphics.RectF
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.MotionEvent
+import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import android.widget.Button
@@ -17,6 +20,7 @@ import fr.hugodemont.samuraisiege.sprite.*
 import fr.hugodemont.samuraisiege.transform.FocusTransform
 import fr.hugodemont.samuraisiege.utils.SpriteSheet
 import kotlinx.coroutines.*
+
 
 @Suppress("DEPRECATION")
 class MainActivity : AppCompatActivity() {
@@ -35,30 +39,34 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_chargin)
 
         val handler = Handler(Looper.getMainLooper()) // Handler pour le chargement principal
-        handler.postDelayed({
-            setContentView(R.layout.activity_main)
+        handler.postDelayed(
+            {
+                setContentView(R.layout.activity_main)
+                val btnPlay: Button =
+                    this@MainActivity.findViewById(R.id.playBtnId)//Selection du BTN pour play
+                val btnCredits: Button =
+                    this@MainActivity.findViewById(R.id.creditsBtnId)//Selection du BTN pour credits
+                val btnExit: Button =
+                    this@MainActivity.findViewById(R.id.exitBtnId)//Selection du BTN pour exit
 
-            val btnPlay: Button = findViewById(R.id.playBtnId)//Selection du BTN pour play
-            val btnCredits: Button = findViewById(R.id.creditsBtnId)//Selection du BTN pour credits
-            val btnExit: Button = findViewById(R.id.exitBtnId)//Selection du BTN pour exit
-
-            btnPlay.setOnClickListener {
-                setContentView(R.layout.activity_game)
-                // Chargement des feuilles de sprites - Peut etre voir un code moins lourd ?
-                SpriteSheet.load(R.drawable.decor, 10, 8, this)
-                SpriteSheet.load(R.drawable.ennemi, 1, 1, this)
-                SpriteSheet.load(R.drawable.tower, 1, 1, this)
-                SpriteSheet.load(R.drawable.cball, 1, 1, this)
-                SpriteSheet.load(R.drawable.objectif, 1, 1, this)
-                towerDefense() //set Game tower Defense
-            }
-            btnCredits.setOnClickListener {
-                setContentView(R.layout.activity_credits)
-            }
-            btnExit.setOnClickListener {
-                finish()
-            }
-        }, 1000)
+                btnPlay.setOnClickListener {
+                    setContentView(R.layout.activity_game)
+                    // Chargement des feuilles de sprites - Peut etre voir un code moins lourd ?
+                    SpriteSheet.load(R.drawable.decor, 10, 8, this)
+                    SpriteSheet.load(R.drawable.ennemi, 1, 1, this)
+                    SpriteSheet.load(R.drawable.tower, 1, 1, this)
+                    SpriteSheet.load(R.drawable.cball, 1, 1, this)
+                    SpriteSheet.load(R.drawable.objectif, 1, 1, this)
+                    towerDefense() //set Game tower Defense
+                }
+                btnCredits.setOnClickListener {
+                    setContentView(R.layout.activity_credits)
+                }
+                btnExit.setOnClickListener {
+                    finish()
+                }
+            }, 1000
+        )
     }
 
     private fun startMusic() {
@@ -74,6 +82,7 @@ class MainActivity : AppCompatActivity() {
         mediaPlayer?.release()
         mediaPlayer = null
     }
+
     // Game Tower Defense
     private fun towerDefense() {
         startMusic()//Start music au lancement du jeu
@@ -143,6 +152,12 @@ class MainActivity : AppCompatActivity() {
                 FocusTransform(this, room, center, 28) // Modifier la taille de la map sur le visu
             update = {
                 textArgent.text = money.toString() // Texte pour l'argent
+                //Si il n'y a pas de tour qui bouge sur la map nous n'affichons pas le bouton pour fixer
+                if (listTower.list.none { it is TowerSprite && it.move }) {
+                    btnFix.visibility = View.INVISIBLE
+                } else {
+                    btnFix.visibility = View.VISIBLE
+                }
                 btnShop.setOnClickListener {
                     if (money >= 100) { // cost of tower 100 €
                         if (maxTower == 0) {
@@ -177,11 +192,31 @@ class MainActivity : AppCompatActivity() {
                 listEnnemi.list.removeAll { it is EnnemiSprite && it.ennemiPv <= 0 } // Kills des ennemies
                 listObjectif.list.removeAll { it is ObjectifSprite && it.pv <= 0 } // Kills de l'objectif
                 if (listObjectif.list.size == 0) {
-                    setContentView(R.layout.activity_lose)
+                    setContentView(R.layout.activity_lose) // Déplacer sur le layout Activity loose
+                    Toast.makeText(
+                        applicationContext,
+                        "You loose the game :(",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    val btnRestart: Button =
+                        this@MainActivity.findViewById(R.id.buttonRestart)//Je capte le BTN restart
+                    btnRestart.setOnClickListener {//Je lui donne une action
+                        restartApp()
+                    }
                 }
                 if (job.isCompleted && listEnnemi.list.size == 0 && listObjectif.list.size == 1) {
                     if (vagueNb == vagues.size) {
-                        setContentView(R.layout.activity_win) // Rajouter +1 à la boucle de vague
+                        Toast.makeText(
+                            applicationContext,
+                            "You win..(we don't have win screen yet.. :)",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        setContentView(R.layout.activity_win)
+                        val btnRestart: Button =
+                            this@MainActivity.findViewById(R.id.buttonRestart)//Je capte le BTN restart
+                        btnRestart.setOnClickListener {//Je lui donne une action
+                            restartApp()
+                        }
                     } else if (vagueNb >= 0) {
                         println(vagueNb)
                         job = scope.launch {
@@ -221,7 +256,6 @@ class MainActivity : AppCompatActivity() {
                             val ennemiSprite = it as? EnnemiSprite // On caste l'ennemi
                             ennemiSprite?.ennemiPv =
                                 ennemiSprite?.ennemiPv?.minus(50) ?: 0 //50 pv de degats
-
                             money += 10 // On gagne de l'argent (1)
                             println(ennemiSprite?.ennemiPv)
                         }
@@ -266,6 +300,16 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("UnspecifiedImmutableFlag")
+    fun restartApp() {
+        val ctx = applicationContext
+        val pm = ctx.packageManager
+        val intent = pm.getLaunchIntentForPackage(ctx.packageName)
+        val mainIntent = Intent.makeRestartActivityTask(intent!!.component)
+        ctx.startActivity(mainIntent)
+        Runtime.getRuntime().exit(0)
+    }
+
     private fun validPlaceTower(it: TowerSprite, room: TiledArea): Boolean {
         if (room.data[it.x.toInt() / room.w, it.y.toInt() / room.h] == 2) return true
         return false
@@ -294,10 +338,12 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
     override fun onPause() {//Lors d'une sortie de l'app je coupe le son
         super.onPause()
         stopMusic()
     }
+
     override fun onResume() {//Quand je rentre de nouveau dans le jeu, je reset le son
         super.onResume()
         startMusic()

@@ -1,4 +1,11 @@
 <resources>
     <string name="app_name">Samurai Siege</string>
     <string name="le_button_shop">Le button shop</string>
+    <string name="relancer_le_jeu">Relancer le jeu</string>
+    <string name="you_are_a_looser">You are a looser</string>
+    <string name="oui">oui</string>
+    <string name="textview">TextView</string>
+    <string name="validate_position">Validate position</string>
+    <string name="button">Button</string>
+    <string name="you_win_the_game_gg">You win the game ! GG</string>
 </resources>
