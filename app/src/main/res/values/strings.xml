@@ -8,4 +8,14 @@
     <string name="validate_position">Validate position</string>
     <string name="button">Button</string>
     <string name="you_win_the_game_gg">You win the game ! GG</string>
+    <string name="une_image_de_piece">Une image de piece</string>
+    <string name="level_design_killian_lhermitte">Level Design : Killian Lhermitte</string>
+    <string name="design_graphique_sofian_far">Design graphique : Sofian Far</string>
+    <string name="d_veloppeur_hugo_demont">Développeur : Hugo Demont</string>
+    <string name="cr_dits">Crédits</string>
+    <string name="m_dubois_m_audemard_mme_hayenne_mme_charnay">M.Dubois, M.Audemard, Mme.Hayenne, Mme.Charnay</string>
+    <string name="merci_tous_les_professeurs">Merci à tous les professeurs !</string>
+    <string name="honorine_arthur_st_phanie_hugo_kevin_luka_thibault_michael_noah_romain_merlin_malory_enzo_sofian_killian_l_maxime_killian_g_alexandre">Honorine, Arthur, Stéphanie, Hugo, Kevin, Luka, Thibault, Michael, Noah, Romain, Merlin, Malory, Enzo, Sofian, Killian L, Maxime, Killian G, Alexandre</string>
+    <string name="merci_tous_les_testeurs">Merci à tous les testeurs !</string>
+    <string name="retour_au_menu">Retour au menu</string>
 </resources>

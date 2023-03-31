@@ -11,10 +11,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
-import android.widget.Button
-import android.widget.ImageButton
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import fr.hugodemont.samuraisiege.sprite.*
 import fr.hugodemont.samuraisiege.transform.FocusTransform
@@ -60,7 +57,9 @@ class MainActivity : AppCompatActivity() {
                     towerDefense() //set Game tower Defense
                 }
                 btnCredits.setOnClickListener {
-                    setContentView(R.layout.activity_credits)
+                    val intent = Intent(this, CreditsActivity::class.java)
+                    startActivity(intent)
+
                 }
                 btnExit.setOnClickListener {
                     finish()
@@ -68,6 +67,7 @@ class MainActivity : AppCompatActivity() {
             }, 1000
         )
     }
+
 
     private fun startMusic() {
         if (mediaPlayer == null) {
