@@ -19,12 +19,13 @@ import fr.hugodemont.samuraisiege.utils.SpriteSheet
 import kotlinx.coroutines.*
 
 
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION", "UNREACHABLE_CODE")
 class MainActivity : AppCompatActivity() {
     private val gameView by lazy { findViewById<GameView>(R.id.gameView) }
-    private var money = 90 // argent du joueur
+    private var money = 10 // argent du joueur
     private var mediaPlayer: MediaPlayer? = null
 
+    @SuppressLint("ClickableViewAccessibility", "UseCompatLoadingForDrawables")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //Setting du mode fullscreen
@@ -39,13 +40,44 @@ class MainActivity : AppCompatActivity() {
         handler.postDelayed(
             {
                 setContentView(R.layout.activity_main)
-                val btnPlay: Button =
-                    this@MainActivity.findViewById(R.id.playBtnId)//Selection du BTN pour play
-                val btnCredits: Button =
-                    this@MainActivity.findViewById(R.id.creditsBtnId)//Selection du BTN pour credits
-                val btnExit: Button =
-                    this@MainActivity.findViewById(R.id.exitBtnId)//Selection du BTN pour exit
+                val btnPlay: ImageButton = this@MainActivity.findViewById(R.id.playBtnId)//Selection du BTN pour play
+                val btnCredits: ImageButton = this@MainActivity.findViewById(R.id.creditsBtnId)//Selection du BTN pour credits
+                val btnExit: ImageButton = this@MainActivity.findViewById(R.id.exitBtnId)//Selection du BTN pour exit
 
+                //Changer les images
+                btnPlay.setOnTouchListener { _, event ->
+                    when (event.action) {
+                        MotionEvent.ACTION_DOWN -> {
+                            btnPlay.setImageResource(R.drawable.play2)
+                        }
+                        MotionEvent.ACTION_UP -> {
+                            btnPlay.setImageResource(R.drawable.play)
+                        }
+                    }
+                    false
+                }
+                btnCredits.setOnTouchListener { _, event ->
+                    when (event.action) {
+                        MotionEvent.ACTION_DOWN -> {
+                            btnCredits.setImageResource(R.drawable.credits2)
+                        }
+                        MotionEvent.ACTION_UP -> {
+                            btnCredits.setImageResource(R.drawable.credits)
+                        }
+                    }
+                    false
+                }
+                btnExit.setOnTouchListener { _, event ->
+                    when (event.action) {
+                        MotionEvent.ACTION_DOWN -> {
+                            btnExit.setImageResource(R.drawable.leave2)
+                        }
+                        MotionEvent.ACTION_UP -> {
+                            btnExit.setImageResource(R.drawable.leave)
+                        }
+                    }
+                    false
+                }
                 btnPlay.setOnClickListener {
                     setContentView(R.layout.activity_game)
                     // Chargement des feuilles de sprites - Peut etre voir un code moins lourd ?
@@ -108,7 +140,7 @@ class MainActivity : AppCompatActivity() {
         btnFix.setOnClickListener {
             listTower.list.forEach {//Selection de la tour
                 if (it is TowerSprite && it.move) {
-                    if (validPlaceTower(it, room)) {
+                    if (validPlaceTower(it, room, listTower)) {
                         it.move = false
                         maxTower--
                     } else {
@@ -248,10 +280,10 @@ class MainActivity : AppCompatActivity() {
                         target != null
                         //On selectionne l'ennemi le plus proche
                         val rect = RectF(
-                            point[0] - 30,
-                            point[1] - 30,
-                            point[0] + 30,
-                            point[1] + 30
+                            point[0] - 1,
+                            point[1] - 1,
+                            point[0] + 1,
+                            point[1] + 1
                         )
                         // On met des degats sur l'ennemi
                         listEnnemi.list.filter {
@@ -260,7 +292,6 @@ class MainActivity : AppCompatActivity() {
                             val ennemiSprite = it as? EnnemiSprite // On caste l'ennemi
                             ennemiSprite?.ennemiPv =
                                 ennemiSprite?.ennemiPv?.minus(10) ?: 0 //50 pv de degats
-                            money += 10 // On gagne de l'argent (1)
                         }
                         if (offset == null) {
                             offset = point[0]
@@ -283,7 +314,7 @@ class MainActivity : AppCompatActivity() {
                                         // On déplace le sprite sélectionné aux nouvelles coordonnées
                                         it.x = point[0]
                                         it.y = point[1]
-                                        btnFix.isEnabled = validPlaceTower(it, room)
+                                        btnFix.isEnabled = validPlaceTower(it, room, listTower)
                                         gameView.invalidate() // On demande la mise à jour
                                     }
                                     true
@@ -313,12 +344,25 @@ class MainActivity : AppCompatActivity() {
         Runtime.getRuntime().exit(0)
     }
 
-    private fun validPlaceTower(it: TowerSprite, room: TiledArea): Boolean {
+    private fun validPlaceTower(
+        it: TowerSprite,
+        room: TiledArea,
+        listTower: SpriteList
+    ): Boolean {
         if (it.x < 0 || it.y < 0) return false
         if (it.x.toInt() / room.w >= room.sizeX || it.y.toInt() / room.h >= room.sizeY) return false
-
         if (room.data[it.x.toInt() / room.w, it.y.toInt() / room.h] == 2) return true
         return false
+
+        //Si la bonding box de it est sur celle d'une autre tour alors on retourne false
+        listTower.list.forEach { tower ->
+            if (tower is TowerSprite) {
+                if (tower.boundingBox.intersect(it.boundingBox)) {
+                    return false
+                }
+            }
+        }
+
     }
 
     //Generate with timer (Couroutine)
