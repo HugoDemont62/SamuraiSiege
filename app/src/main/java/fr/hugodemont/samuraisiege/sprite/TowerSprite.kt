@@ -3,6 +3,7 @@ package fr.hugodemont.samuraisiege.sprite
 import android.graphics.Canvas
 import androidx.core.graphics.withTranslation
 
+
 class TowerSprite(
     sprite: Int,
     val list: SpriteList,
@@ -40,6 +41,17 @@ class TowerSprite(
             }
         }
     }
+    //fun shoot() {
+    //    val ballSprite = CBallSprite(
+    //        sprite = R.drawable.cball,
+    //        list = list,
+    //        tiledArea = tiledArea,
+    //        distanceMap = distanceMap,
+    //        coordinate = coordinate
+    //    )
+    //    ballSprite.speed = 0.1f
+    //    list.add(ballSprite)
+    //}
 
     fun square(x: Float) = x * x
     fun distance(target: BasicSprite): Float {

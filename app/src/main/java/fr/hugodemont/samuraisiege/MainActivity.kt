@@ -68,7 +68,6 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-
     private fun startMusic() {
         if (mediaPlayer == null) {
             mediaPlayer = MediaPlayer.create(this, R.raw.samurai)
@@ -166,7 +165,7 @@ class MainActivity : AppCompatActivity() {
                                 TowerSprite(
                                     R.drawable.tower,
                                     listEnnemi,
-                                    (room.sizeX/2)+1  to (room.sizeY / 3),
+                                    (room.sizeX / 2) + 1 to (room.sizeY / 3),
                                     room,
                                     true
                                 )
@@ -260,7 +259,7 @@ class MainActivity : AppCompatActivity() {
                         }.forEach { // On parcours les ennemis
                             val ennemiSprite = it as? EnnemiSprite // On caste l'ennemi
                             ennemiSprite?.ennemiPv =
-                                ennemiSprite?.ennemiPv?.minus(50) ?: 0 //50 pv de degats
+                                ennemiSprite?.ennemiPv?.minus(10) ?: 0 //50 pv de degats
                             money += 10 // On gagne de l'argent (1)
                         }
                         if (offset == null) {
@@ -315,6 +314,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun validPlaceTower(it: TowerSprite, room: TiledArea): Boolean {
+        if (it.x < 0 || it.y < 0) return false
+        if (it.x.toInt() / room.w >= room.sizeX || it.y.toInt() / room.h >= room.sizeY) return false
+
         if (room.data[it.x.toInt() / room.w, it.y.toInt() / room.h] == 2) return true
         return false
     }
