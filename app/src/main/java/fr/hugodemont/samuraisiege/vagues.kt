@@ -10,8 +10,9 @@ val vagues = arrayOf(
     Vague(300, 0.06f,100),
     Vague(400, 0.1f, 100),
     Vague(500, 0.2f, 100),
-    Vague(600, 0.2f, 100),
-    Vague(700, 0.2f, 100),
-    Vague(800, 0.2f, 100),
-    Vague(900, 0.2f, 100),
+    Vague(550, 0.25f, 100),
+    Vague(600, 0.3f, 100),
+    Vague(650, 0.3f, 100),
+    Vague(400, 0.6f, 100),
+    Vague(550, 0.6f, 100),
 )

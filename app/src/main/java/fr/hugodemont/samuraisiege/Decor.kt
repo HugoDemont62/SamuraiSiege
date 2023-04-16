@@ -8,7 +8,8 @@ import fr.hugodemont.samuraisiege.sprite.TileMap
  */
 class Decor(dataSrc: Array<String>) : TileMap {
 
-    private val digits = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz&é(-è_çà)=+*ù%$£¤µ§,;:!./?|@#~{[]}"
+    private val digits =
+        "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz&é(-è_çà)=+*ù%$£¤µ§,;:!./?|@#~{[]}"
 
     private val data: List<List<Int>> = dataSrc.map { line -> line.map { c -> digits.indexOf(c) } }
 
@@ -40,6 +41,7 @@ class Decor(dataSrc: Array<String>) : TileMap {
             "AAAAAAAAAAtuAAAAAAAAAAAAAAAZaAAAAAAZaAAA3AE2202220222222222222222EAA3A0",
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAjkAAAAAAjkAAAAAE2201110222COOOOOOOOOOOPAAAA0",
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAtuAAAAAAtuAAAAACOOOOOOOOOOPAA33AAAAAAAAAAAA0",
-        )
+
+            )
     }
 }

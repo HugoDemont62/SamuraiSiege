@@ -14,10 +14,10 @@
         android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.533"
+        app:layout_constraintHorizontal_bias="0.529"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.403"
+        app:layout_constraintVertical_bias="0.412"
         app:srcCompat="@drawable/herbe"
         tools:ignore="VisualLintBounds" />
 
@@ -79,5 +79,18 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/piece"
         android:contentDescription="@string/une_image_de_piece" />
+
+    <TextView
+        android:id="@+id/textViewVagues"
+        android:layout_width="187dp"
+        android:layout_height="43dp"
+        android:layout_marginStart="16dp"
+        android:gravity="center_vertical"
+        android:text="VAGUE"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imageView2"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.051" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

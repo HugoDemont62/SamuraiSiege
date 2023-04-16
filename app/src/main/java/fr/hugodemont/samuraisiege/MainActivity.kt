@@ -22,7 +22,7 @@ import kotlinx.coroutines.*
 @Suppress("DEPRECATION", "UNREACHABLE_CODE")
 class MainActivity : AppCompatActivity() {
     private val gameView by lazy { findViewById<GameView>(R.id.gameView) }
-    private var money = 10 // argent du joueur
+    private var money = 200 // argent du joueur
     private var mediaPlayer: MediaPlayer? = null
 
     @SuppressLint("ClickableViewAccessibility", "UseCompatLoadingForDrawables")
@@ -40,9 +40,12 @@ class MainActivity : AppCompatActivity() {
         handler.postDelayed(
             {
                 setContentView(R.layout.activity_main)
-                val btnPlay: ImageButton = this@MainActivity.findViewById(R.id.playBtnId)//Selection du BTN pour play
-                val btnCredits: ImageButton = this@MainActivity.findViewById(R.id.creditsBtnId)//Selection du BTN pour credits
-                val btnExit: ImageButton = this@MainActivity.findViewById(R.id.exitBtnId)//Selection du BTN pour exit
+                val btnPlay: ImageButton =
+                    this@MainActivity.findViewById(R.id.playBtnId)//Selection du BTN pour play
+                val btnCredits: ImageButton =
+                    this@MainActivity.findViewById(R.id.creditsBtnId)//Selection du BTN pour credits
+                val btnExit: ImageButton =
+                    this@MainActivity.findViewById(R.id.exitBtnId)//Selection du BTN pour exit
 
                 //Changer les images
                 btnPlay.setOnTouchListener { _, event ->
@@ -84,6 +87,7 @@ class MainActivity : AppCompatActivity() {
                     SpriteSheet.load(R.drawable.decor, 10, 8, this)
                     SpriteSheet.load(R.drawable.ennemi, 1, 1, this)
                     SpriteSheet.load(R.drawable.tower, 1, 1, this)
+                    SpriteSheet.load(R.drawable.tower2, 1, 1, this)
                     SpriteSheet.load(R.drawable.cball, 1, 1, this)
                     SpriteSheet.load(R.drawable.objectif, 1, 1, this)
                     towerDefense() //set Game tower Defense
@@ -91,12 +95,11 @@ class MainActivity : AppCompatActivity() {
                 btnCredits.setOnClickListener {
                     val intent = Intent(this, CreditsActivity::class.java)
                     startActivity(intent)
-
                 }
                 btnExit.setOnClickListener {
                     finish()
                 }
-            }, 1000
+            }, 100
         )
     }
 
@@ -115,6 +118,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     // Game Tower Defense
+    @SuppressLint("SetTextI18n")
     private fun towerDefense() {
         startMusic()//Start music au lancement du jeu
         // tableau des Vagues d'ennemis
@@ -142,6 +146,7 @@ class MainActivity : AppCompatActivity() {
                 if (it is TowerSprite && it.move) {
                     if (validPlaceTower(it, room, listTower)) {
                         it.move = false
+                        it.sprite = R.drawable.tower
                         maxTower--
                     } else {
                         Toast.makeText(
@@ -175,6 +180,10 @@ class MainActivity : AppCompatActivity() {
                 distanceMap
             )
         }
+        //afficher dans le texte le nombre de vague
+        val textVague: TextView = findViewById(R.id.textViewVagues)
+        textVague.text = "Vague : ${vagueNb + 1}/${vagues.size}"
+
         // Configuration de gameView : tout ce qui est dans le apply concerne gameView
         gameView.apply {
             background = room
@@ -195,7 +204,7 @@ class MainActivity : AppCompatActivity() {
                             money -= 100
                             listTower.add(
                                 TowerSprite(
-                                    R.drawable.tower,
+                                    R.drawable.tower    ,
                                     listEnnemi,
                                     (room.sizeX / 2) + 1 to (room.sizeY / 3),
                                     room,
@@ -353,16 +362,6 @@ class MainActivity : AppCompatActivity() {
         if (it.x.toInt() / room.w >= room.sizeX || it.y.toInt() / room.h >= room.sizeY) return false
         if (room.data[it.x.toInt() / room.w, it.y.toInt() / room.h] == 2) return true
         return false
-
-        //Si la bonding box de it est sur celle d'une autre tour alors on retourne false
-        listTower.list.forEach { tower ->
-            if (tower is TowerSprite) {
-                if (tower.boundingBox.intersect(it.boundingBox)) {
-                    return false
-                }
-            }
-        }
-
     }
 
     //Generate with timer (Couroutine)

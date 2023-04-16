@@ -21,4 +21,5 @@
     <string name="fond_d_cran">Fond d\'écran</string>
     <string name="btn">Btn</string>
     <string name="image_d_herbe">Image d\'herbe</string>
+    <string name="chargement_en_cours">Chargement en cours...</string>
 </resources>
